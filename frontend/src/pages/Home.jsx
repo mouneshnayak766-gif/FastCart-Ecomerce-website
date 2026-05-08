@@ -3,14 +3,21 @@ import CategoryBar from "../components/CategoryBar";
 import Banner from "../components/Banner";
 import ProductCard from "../components/ProductCard";
 import Header from "../components/Header";
+import {useEffect, useState} from "react";
 
-const products = [
-  { id:1, name:"Shirt", price:499, image:"https://via.placeholder.com/200" },
-  { id:2, name:"Phone", price:15000, image:"https://via.placeholder.com/200" },
-  { id:3, name:"Book", price:299, image:"https://via.placeholder.com/200" },
-]; 
+
 
 export default function Home() {
+  const [products,setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8081/api/products")
+      .then(response => response.json())
+      .then(data => setProducts(data))
+       .catch(err => console.log(err));
+    
+  },[]);
+
   return (
     <div>
       <Header /> 

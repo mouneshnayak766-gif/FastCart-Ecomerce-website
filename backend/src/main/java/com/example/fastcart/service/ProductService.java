@@ -26,4 +26,7 @@ public class ProductService {
     public Product addProduct(Product product) {
         return repo.save(product);
     }
+    public Product getProductById(Long id) {
+    return repo.findById(id).orElse(null);
+}
 }

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   return (
@@ -34,6 +36,9 @@ export default function Navbar() {
     placeholder="Search for products, brands and more"
     className="w-full bg-transparent outline-none text-gray-700 placeholder-gray-500"
   />
+   {/* Camera Icon */}
+   <FontAwesomeIcon icon={faCamera} 
+   className="text-gray-500 text-lg cursor-pointer"/>
 </div>
 
       {/* Actions */}

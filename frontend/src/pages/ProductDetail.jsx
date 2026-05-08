@@ -11,13 +11,13 @@ export default function ProductDetails() {
     id,
     name: "Shirt",
     price: 499,
-    image: "https://via.placeholder.com/400",
+    imageUrl: "https://via.placeholder.com/400",
   };
 
   const sizes = ["S", "M", "L", "XL", "XXL"];
   const [selectedSize, setSelectedSize] = useState(null);
 
- 
+ //
  
   return (
     <div>
@@ -27,7 +27,7 @@ export default function ProductDetails() {
         
         {/* Image */}
         <img
-          src={product.image}
+          src={product.imageUrl}
           className="w-full h-[400px] object-cover rounded"
         />
 
