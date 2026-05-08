@@ -23,6 +23,7 @@ export default function Home() {
       <Header /> 
       <Banner />
       <Navbar />
+      
       <CategoryBar />
     
 
