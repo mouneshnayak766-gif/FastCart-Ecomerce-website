@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import axios from "axios";
 
-export default function ProductDetails() {
+export default function ProductDetail() {
   const { id } = useParams();
 
   
@@ -18,7 +19,29 @@ export default function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState(null);
 
  //
- 
+ const user = JSON.parse(localStorage.getItem("user"));
+
+const addToCart = async () => {
+
+  if(!user) {
+    alert("Please login first");
+    return;
+  }
+
+  await axios.post(
+    "http://localhost:8081/api/cart/add",
+    {
+      userId: user.id,
+      productId: product.id,
+      productName: product.name,
+      imageUrl: product.imageUrl,
+      price: product.price,
+      size: selectedSize,
+    }
+  );
+
+  alert("Added to cart");
+};
   return (
     <div>
       <Navbar />
@@ -56,7 +79,7 @@ export default function ProductDetails() {
 
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
-            <button className="border px-6 py-3 rounded-lg font-semibold">
+            <button className="border px-6 py-3 rounded-lg font-semibold" onClick={addToCart}>
               Add to Cart
             </button>
 

@@ -3,6 +3,10 @@ import CategoryBar from "../components/CategoryBar";
 import Banner from "../components/Banner";
 import ProductCard from "../components/ProductCard";
 import Header from "../components/Header";
+import Signup from "../components/Signup";
+import Login from "../components/Login";
+import Account from "../components/Account";
+
 import {useEffect, useState} from "react";
 
 
@@ -23,6 +27,8 @@ export default function Home() {
       <Header /> 
       <Banner />
       <Navbar />
+     
+       
       
       <CategoryBar />
     

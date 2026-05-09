@@ -7,7 +7,7 @@ export default function CategoryPage() {
   const { name } = useParams();
 
   const products = [
-    { id:1, name:`${name} item`, price:99, image:"https://cdn.pixabay.com/photo/2024/02/06/18/10/ai-generated-8557635_1280.jpg" },
+    { id:1, name:`${name} item`, price:99, imageUrl:"https://cdn.pixabay.com/photo/2024/02/06/18/10/ai-generated-8557635_1280.jpg" },
   ];
 
   return (

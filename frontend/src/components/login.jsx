@@ -1,19 +1,86 @@
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
+// Login.jsx
 
-export function Login () {
-    return (
-        <div className="flex gap-4 items-center">
-        <button className="bg-white text-blue-700 px-4 py-1 rounded font-semibold">
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+export default function Login() {
+
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+
+    try {
+
+      const response = await axios.post(
+        "http://localhost:8081/api/users/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      if (response.data) {
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(response.data)
+        );
+
+        alert("Login Successful");
+
+        navigate("/");
+
+      } else {
+
+        alert("Invalid Email or Password");
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Server Error");
+
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+
+      <div className="bg-white p-8 rounded-xl shadow-lg w-[350px] flex flex-col gap-4">
+
+        <h1 className="text-3xl font-bold text-center">
+          Login
+        </h1>
+
+        <input
+          type="email"
+          placeholder="Email"
+          className="border p-3 rounded"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          className="border p-3 rounded"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button
+          onClick={handleLogin}
+          className="bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
+        >
           Login
         </button>
 
-        <button className="flex items-center gap-1">
-          🛒 Cart
-        </button>
       </div>
 
     </div>
-    ); }
-   
+  );
+}
