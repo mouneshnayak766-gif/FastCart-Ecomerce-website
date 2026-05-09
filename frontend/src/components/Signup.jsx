@@ -13,7 +13,7 @@ export default function Signup() {
     email: "",
     password: "",
     address: "",
-    phone: "",
+    phoneNumber: "",
   });
 
   const handleChange = (e) => {
@@ -90,8 +90,8 @@ export default function Signup() {
 
         <input
           type="text"
-          name="phone"
-          placeholder="Phone Number"
+          name="phoneNumber"
+          placeholder="PhoneNumber"
           className="border p-3 rounded"
           onChange={handleChange}
         />
