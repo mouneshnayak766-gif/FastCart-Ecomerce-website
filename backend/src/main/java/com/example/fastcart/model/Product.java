@@ -16,5 +16,6 @@ public class Product {
     private String name;
     private double price;
     private String category;
-    private String imageUrl;
+  @Column(name = "image_url")
+private String imageUrl; 
 }

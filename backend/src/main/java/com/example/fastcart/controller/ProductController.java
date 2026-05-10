@@ -1,37 +1,30 @@
 package com.example.fastcart.controller;
 
 import com.example.fastcart.model.Product;
-import com.example.fastcart.service.ProductService;
+import com.example.fastcart.repository.ProductRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin("http://localhost:5173")
 public class ProductController {
 
-
-
-    
-    private final ProductService service;
-
-    public ProductController(ProductService service) {
-        this.service = service;
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     @GetMapping
-    public List<Product> getAll() {
-        return service.getAllProducts();
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
-    @GetMapping("/category/{name}")
-    public List<Product> getByCategory(@PathVariable String name) {
-        return service.getByCategory(name);
-    }
+    @GetMapping("/{id}")
+    public Product getProductById(@PathVariable Long id) {
 
-    @PostMapping
-    public Product addProduct(@RequestBody Product product) {
-        return service.addProduct(product);
+        return productRepository.findById(id).orElse(null);
+
     }
 }
