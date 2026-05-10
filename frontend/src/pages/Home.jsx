@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import Signup from "../components/Signup";
 import Login from "../components/Login";
 import Account from "../components/Account";
+import Footer from "../components/Footer";
 
 import {useEffect, useState} from "react";
 
@@ -27,15 +28,15 @@ export default function Home() {
       <Header /> 
       <Banner />
       <Navbar />
-     
-       
-      
       <CategoryBar />
+     
+     
     
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
         {products.map(p => <ProductCard key={p.id} product={p} />)}
       </div>
+       <Footer />
     </div>
   );
 }
