@@ -18,4 +18,7 @@ public class Product {
     private String category;
   @Column(name = "image_url")
 private String imageUrl; 
+private String description;
+private Double rating;
+private Integer stock;
 }

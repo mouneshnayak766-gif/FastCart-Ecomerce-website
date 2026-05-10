@@ -16,42 +16,276 @@ export default function ProductDetail() {
 
         setProduct(response.data);
 
+      })
+      .catch((error) => {
+
+        console.log(error);
+
       });
 
   }, [id]);
 
   if (!product) {
 
-    return <h1>Loading...</h1>;
+    return (
+      <h1 className="text-3xl p-10">
+        Loading...
+      </h1>
+    );
 
   }
 
   return (
 
-    <div className="flex gap-10 p-10">
+    <div className="bg-gray-100 min-h-screen p-8">
 
-      <img
-        src={product.imageUrl}
-        alt={product.name}
-        className="w-[400px] h-[400px] object-contain border"
-      />
+      <div
+        className="
+          bg-white
+          rounded-xl
+          shadow-lg
+          p-8
+          flex
+          flex-col
+          md:flex-row
+          gap-10
+        "
+      >
 
-      <div>
+        {/* LEFT IMAGE SECTION */}
+        <div className="flex-1">
 
-        <h1 className="text-4xl font-bold">
-          {product.name}
-        </h1>
+          <img
+           
+  src={`http://localhost:5173${product.imageUrl}`}
+            alt={product.name}
+            className="
+              w-full
+              max-w-[450px]
+              h-[450px]
+              object-contain
+              border
+              rounded-lg
+              p-4
+            "
+          />
 
-        <h2 className="text-3xl text-green-600 mt-4">
-          ₹{product.price}
-        </h2>
+          {/* BUTTONS */}
+          <div className="flex gap-4 mt-6">
 
-        <button className="bg-yellow-500 px-6 py-3 rounded mt-6">
-          Add to Cart
-        </button>
+            <button
+              className="
+                bg-yellow-500
+                hover:bg-yellow-600
+                text-white
+                px-8
+                py-3
+                rounded-lg
+                font-bold
+                w-full
+              "
+            >
+              Add to Cart
+            </button>
+
+            <button
+              className="
+                bg-orange-500
+                hover:bg-orange-600
+                text-white
+                px-8
+                py-3
+                rounded-lg
+                font-bold
+                w-full
+              "
+            >
+              Buy Now
+            </button>
+
+          </div>
+
+        </div>
+
+        {/* RIGHT DETAILS SECTION */}
+        <div className="flex-1">
+
+          {/* NAME */}
+          <h1
+            className="
+              text-4xl
+              font-bold
+              text-gray-800
+            "
+          >
+            {product.name}
+          </h1>
+
+          {/* DESCRIPTION */}
+          <p
+            className="
+              text-gray-500
+              mt-3
+              text-lg
+            "
+          >
+            {product.description}
+          </p>
+
+          {/* RATING */}
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+              mt-4
+            "
+          >
+
+            <span
+              className="
+                bg-green-600
+                text-white
+                px-3
+                py-1
+                rounded-md
+                text-sm
+                font-semibold
+              "
+            >⭐ {product.rating}
+            </span>
+
+            <span className="text-gray-500">
+              {Math.floor(product.rating * 2500)} Ratings & 500+ Reviews
+            </span>
+
+          </div>
+
+          {/* PRICE */}
+          <div className="mt-6">
+
+            <h2
+              className="
+                text-4xl
+                font-bold
+                text-green-700
+              "
+            >
+              ₹{product.price}
+            </h2>
+
+            <div className="flex items-center gap-3 mt-2">
+
+              <span className="line-through text-gray-400 text-xl">
+                ₹{product.price + 2000}
+              </span>
+
+              <span className="text-green-600 font-bold">
+                20% OFF
+              </span>
+
+            </div>
+
+          </div>
+
+          {/* STOCK STATUS */}
+          <div className="mt-5">
+
+            <p
+              className="
+                text-green-700
+                font-bold
+                text-lg
+              "
+            >
+             {product.stock > 0 ? "In Stock" : "Out Of Stock"}
+            </p>
+
+          </div>
+
+          {/* OFFERS */}
+          <div className="mt-8">
+
+            <h3
+              className="
+                text-2xl
+                font-bold
+                mb-4
+              "
+            >
+              Available Offers
+            </h3>
+
+            <ul className="space-y-3 text-gray-700">
+
+              <li>
+                ✅ Bank Offer 10% Instant Discount
+              </li>
+
+              <li>
+                ✅ Free Delivery on orders above ₹499
+              </li>
+
+              <li>
+                ✅ Special Price Get extra discount
+              </li>
+
+              <li>
+                ✅ EMI starting from ₹199/month
+              </li>
+
+            </ul>
+
+          </div>
+
+          {/* DELIVERY */}
+          <div className="mt-8">
+
+            <h3
+              className="
+                text-2xl
+                font-bold
+                mb-3
+              "
+            >
+              Delivery
+            </h3>
+
+            <p className="text-gray-700">
+              Delivery in 3-5 days 🚚
+            </p>
+
+          </div>
+
+          {/* SPECIFICATIONS */}
+          <div className="mt-8">
+
+            <h3
+              className="
+                text-2xl
+                font-bold
+                mb-4
+              "
+            >
+              Specifications
+            </h3>
+
+            <div className="space-y-2 text-gray-700">
+
+              <p>• Premium Build Quality</p>
+              <p>• Stylish Modern Design</p>
+              <p>• Long Lasting Performance</p>
+              <p>• 1 Year Warranty</p>
+
+            </div>
+
+          </div>
+
+        </div>
 
       </div>
 
     </div>
+
   );
 }
