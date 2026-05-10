@@ -20,10 +20,9 @@ public class ProductService {
     }
 
     public List<Product> getByCategory(String category) {
-        return repo.findByCategory(category); 
+        return repo.findByCategory(category);
     }
-
-    public Product addProduct(Product product) {
-        return repo.save(product);
-    }
+    public Product getProductById(Long id) {
+    return repo.findById(id).orElse(null);
+}
 }

@@ -17,7 +17,7 @@ export default function AppRoutes() {
       <Route path="/" element={<Home />} />
 
       <Route
-        path="/category/:name"
+        path="/category/:category"
         element={<CategoryPage />}
       />
 
