@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "axios"; 
+import CategoryBar from "../components/CategoryBar";
 
 export default function ProductDetail() {
 
@@ -28,6 +29,7 @@ export default function ProductDetail() {
   if (!product) {
 
     return (
+      
       <h1 className="text-3xl p-10">
         Loading...
       </h1>
@@ -36,7 +38,8 @@ export default function ProductDetail() {
   }
 
   return (
-
+<>
+      <CategoryBar />
     <div className="bg-gray-100 min-h-screen p-8">
 
       <div
@@ -57,7 +60,7 @@ export default function ProductDetail() {
 
           <img
            
-  src={`http://localhost:5173${product.imageUrl}`}
+  src={`http://localhost:8081${product.imageUrl}`}
             alt={product.name}
             className="
               w-full
@@ -286,6 +289,6 @@ export default function ProductDetail() {
       </div>
 
     </div>
-
+</>
   );
 }

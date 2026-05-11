@@ -59,7 +59,7 @@ export default function ProductCard({ product }) {
             mb-3
           "
         >
-          ⭐ 4.3
+          ⭐ {product.rating}
         </div>
 
         {/* Price */}

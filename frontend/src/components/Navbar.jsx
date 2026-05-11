@@ -1,6 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
+import { Search, ChevronDown, User } from "lucide-react";
 
-export default function Navbar() {
+export default function Navbar({
+  search,
+  setSearch,
+  selectedCategory,
+  setSelectedCategory,
+  sortOption,
+  setSortOption,
+  minRating,
+  setMinRating,
+}) {
 
   const navigate = useNavigate();
 
@@ -16,91 +26,319 @@ export default function Navbar() {
 
   return (
 
-    <div className="bg-blue-700 text-white px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <nav
+      className="
+        bg-blue-700
+        px-6
+        py-3
+        shadow-md
+        sticky
+        top-0
+        z-50
+      "
+    >
 
-      {/* Logo */}
-      <Link
-        to="/"
-        className="text-2xl font-bold flex items-center"
+      <div
+        className="
+          max-w-7xl
+          mx-auto
+          flex
+          flex-col
+          lg:flex-row
+          items-center
+          justify-between
+          gap-4
+        "
       >
-        <span className="bg-yellow-400 text-black px-2 py-1 rounded mr-2">
-          F
-        </span>
 
-        FastCart
-      </Link>
-
-      {/* Search Bar */}
-      <div className="flex items-center bg-white rounded-full px-4 py-2 w-full md:w-[400px]">
-
-        {/* Search Icon */}
-        <svg
-          className="w-5 h-5 text-gray-500 mr-3"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
+        {/* LOGO */}
+        <Link
+          to="/"
+          className="
+            flex
+            items-center
+            gap-3
+            text-white
+            font-bold
+            text-4xl
+          "
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 21l-4.35-4.35m1.6-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
 
-        {/* Input */}
-        <input
-          type="text"
-          placeholder="Search products, brands and more"
-          className="w-full outline-none text-black"
-        />
+          <div
+            className="
+              bg-yellow-400
+              text-black
+              w-12
+              h-12
+              rounded-lg
+              flex
+              items-center
+              justify-center
+              font-bold
+              text-2xl
+            "
+          >
+            F
+          </div>
 
-      </div>
+          <span className="text-3xl font-bold">
+            FastCart
+          </span>
 
-      {/* Right Side */}
-      <div className="flex gap-6 items-center">
-
-        <Link to="/">
-          Home
         </Link>
 
-        {
-          user ? (
-            <>
+        {/* SEARCH BAR */}
+        <div
+          className="
+            flex
+            items-center
+            bg-white
+            rounded-lg
+            px-4
+            py-2
+            flex-1
+            max-w-3xl
+            w-full
+          "
+        >
 
-              <Link
-                to="/account"
-                className="font-semibold"
-              >
-                👤 {user.name}
-              </Link>
+          <Search className="text-gray-500 mr-3" size={22} />
 
-              <button
-                onClick={logout}
-                className="bg-red-500 px-4 py-2 rounded hover:bg-red-600"
-              >
-                Logout
-              </button>
+          <input
+            type="text"
+            placeholder="Search products, brands and more"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="
+              w-full
+              outline-none
+              text-lg
+              text-black
+            "
+          />
 
-            </>
-          ) : (
-            <>
+        </div>
 
-              <Link to="/login">
-                Login
-              </Link>
+        {/* RIGHT SECTION */}
+        <div
+          className="
+            flex
+            items-center
+            gap-8
+            text-white
+            font-semibold
+            text-lg
+          "
+        >
 
-              <Link to="/signup">
-                Signup
-              </Link>
+          {/* CATEGORY FILTER */}
+          <div className="relative">
 
-            </>
-          )
-        }
+            <select
+              value={selectedCategory}
+              onChange={(e) =>
+                setSelectedCategory(e.target.value)
+              }
+              className="
+                bg-transparent
+                appearance-none
+                outline-none
+                cursor-pointer
+                pr-6
+              "
+            >
+
+              <option value="" className="text-black">
+                All Categories
+              </option>
+
+              <option value="fashion" className="text-black">
+                Fashion
+              </option>
+
+              <option value="mobile" className="text-black">
+                Mobile
+              </option>
+
+              <option value="electronics" className="text-black">
+                Electronics
+              </option>
+
+              <option value="beauty" className="text-black">
+                Beauty
+              </option>
+
+              <option value="sports" className="text-black">
+                Sports
+              </option>
+
+              <option value="books" className="text-black">
+                Books
+              </option>
+
+              <option value="furniture" className="text-black">
+                Furniture
+              </option>
+
+            </select>
+
+            <ChevronDown
+              size={18}
+              className="
+                absolute
+                right-0
+                top-1/2
+                -translate-y-1/2
+              "
+            />
+
+          </div>
+
+          {/* SORT */}
+          <div className="relative">
+
+            <select
+              value={sortOption}
+              onChange={(e) =>
+                setSortOption(e.target.value)
+              }
+              className="
+                bg-transparent
+                appearance-none
+                outline-none
+                cursor-pointer
+                pr-6
+              "
+            >
+
+              <option value="" className="text-black">
+                Sort
+              </option>
+
+              <option value="lowToHigh" className="text-black">
+                Price Low → High
+              </option>
+
+              <option value="highToLow" className="text-black">
+                Price High → Low
+              </option>
+
+            </select>
+
+            <ChevronDown
+              size={18}
+              className="
+                absolute
+                right-0
+                top-1/2
+                -translate-y-1/2
+              "
+            />
+
+          </div>
+
+          {/* RATING */}
+          <div className="relative">
+
+            <select
+              value={minRating}
+              onChange={(e) =>
+                setMinRating(e.target.value)
+              }
+              className="
+                bg-transparent
+                appearance-none
+                outline-none
+                cursor-pointer
+                pr-6
+              "
+            >
+
+              <option value="" className="text-black">
+                Rating
+              </option>
+
+              <option value="4" className="text-black">
+                4★ & Above
+              </option>
+
+              <option value="3" className="text-black">
+                3★ & Above
+              </option>
+
+              <option value="2" className="text-black">
+                2★ & Above
+              </option>
+
+            </select>
+
+            <ChevronDown
+              size={18}
+              className="
+                absolute
+                right-0
+                top-1/2
+                -translate-y-1/2
+              "
+            />
+
+          </div>
+
+          {/* USER */}
+          {
+            user ? (
+              <div className="flex items-center gap-4">
+
+                <Link
+                  to="/account"
+                  className="
+                    flex
+                    items-center
+                    gap-2
+                  "
+                >
+
+                  <User size={22} />
+
+                  {user.name}
+
+                </Link>
+
+                <button
+                  onClick={logout}
+                  className="
+                    bg-red-500
+                    hover:bg-red-600
+                    px-5
+                    py-3
+                    rounded-lg
+                    transition
+                  "
+                >
+                  Logout
+                </button>
+
+              </div>
+            ) : (
+              <div className="flex gap-4">
+
+                <Link to="/login">
+                  Login
+                </Link>
+
+                <Link to="/signup">
+                  Signup
+                </Link>
+
+              </div>
+            )
+          }
+
+        </div>
 
       </div>
 
-    </div>
+    </nav>
 
   );
 }

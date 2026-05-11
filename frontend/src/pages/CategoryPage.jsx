@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-
 import ProductCard from "../components/ProductCard";
+import Navbar from "../components/Navbar";
+import CategoryBar from "../components/CategoryBar";
+
 function CategoryPage() {
 
   const { category } = useParams();
@@ -23,8 +25,10 @@ function CategoryPage() {
   }, [category]);
 
   return (
-
-   <div
+     <>
+    <Navbar />  
+    <CategoryBar />
+    <div
   className="
     grid
     grid-cols-1
@@ -34,6 +38,7 @@ function CategoryPage() {
     gap-5
   "
 >
+
 
   {products.length === 0 ? (
 
@@ -53,7 +58,7 @@ function CategoryPage() {
   )}
 
 </div>
-
+</>
   );
 }
 
