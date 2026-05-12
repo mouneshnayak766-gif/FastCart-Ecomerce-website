@@ -1,7 +1,12 @@
 package com.example.fastcart.controller;
 
+import com.example.fastcart.jwt.JwtUtil;
 import com.example.fastcart.model.User;
 import com.example.fastcart.repository.UserRepository;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,18 +31,28 @@ public Object signup(@RequestBody User user) {
     return userRepository.save(user);
 }
 
-  @PostMapping("/login")
-public User login(@RequestBody User user) {
+ @PostMapping("/login")
+public Map<String, Object> login(
+        @RequestBody User user
+) {
 
     User existingUser =
             userRepository.findByEmail(user.getEmail());
 
     if(existingUser != null &&
-       existingUser.getPassword().equals(user.getPassword())) {
+            existingUser.getPassword()
+                    .equals(user.getPassword())) {
 
-        existingUser.setPassword(null);
+        String token =
+                JwtUtil.generateToken(existingUser.getId());
 
-        return existingUser;
+        Map<String, Object> response =
+                new HashMap<>();
+
+        response.put("token", token);
+        response.put("user", existingUser);
+
+        return response;
     }
 
     return null;

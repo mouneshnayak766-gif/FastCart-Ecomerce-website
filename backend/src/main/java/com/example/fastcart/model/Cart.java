@@ -20,7 +20,13 @@ public class Cart {
 
     private Double price;
 
+    private Integer quantity;
+
+    private Double totalPrice;
+
     private String size;
+
+    // GETTERS AND SETTERS
 
     public Long getId() {
         return id;
@@ -70,11 +76,27 @@ public class Cart {
         this.price = price;
     }
 
-    public String getSize() {
-        return size;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
+
+    public Double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getSize() {
+    return size;
+}
+
+public void setSize(String size) {
+    this.size = size;
+}
 }

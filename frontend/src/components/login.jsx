@@ -23,22 +23,32 @@ export default function Login() {
         }
       );
 
-      if (response.data) {
+     if (response.data && response.data.user) {
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify(response.data)
-        );
+  localStorage.setItem(
+    "token",
+    response.data.token
+  );
 
-        alert("Login Successful");
+  localStorage.setItem(
+    "user",
+    JSON.stringify(response.data.user)
+  );
 
-        navigate("/");
+  console.log(
+    "Stored User:",
+    response.data.user
+  );
 
-      } else {
+ alert("Login Successful");
 
-        alert("Invalid Email or Password");
+window.location.href = "/";
 
-      }
+} else {
+
+  alert("Invalid Email or Password");
+
+}
 
     } catch (error) {
 

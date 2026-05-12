@@ -8,6 +8,51 @@ export default function ProductDetail() {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
+  const addToCart = async () => {
+
+  const token = localStorage.getItem("token");
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
+
+  if (!user || !token) {
+
+    alert("Please Login First");
+
+    return;
+  }
+
+  try {
+
+    await axios.post(
+      "http://localhost:8081/api/cart/add",
+
+      {
+        productId: product.id,
+        productName: product.name,
+        imageUrl: product.imageUrl,
+        price: product.price,
+        quantity: 1,
+      },
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Product Added To Cart");
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert("Failed To Add Cart");
+
+  }
+};
 
   useEffect(() => {
 
@@ -77,6 +122,7 @@ export default function ProductDetail() {
           <div className="flex gap-4 mt-6">
 
             <button
+            onClick={addToCart}
               className="
                 bg-yellow-500
                 hover:bg-yellow-600
@@ -88,7 +134,7 @@ export default function ProductDetail() {
                 w-full
               "
             >
-              Add to Cart
+              Add To Cart
             </button>
 
             <button

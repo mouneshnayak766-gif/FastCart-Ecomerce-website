@@ -14,16 +14,23 @@ export default function Navbar({
 
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const storedUser =
+  localStorage.getItem("user");
 
-  const logout = () => {
+const user =
+  storedUser
+    ? JSON.parse(storedUser)
+    : null;
 
-    localStorage.removeItem("user");
+ const logout = () => {
 
-    navigate("/");
+  localStorage.removeItem("user");
 
-  };
+  localStorage.removeItem("token");
 
+  navigate("/login");
+
+};
   return (
 
     <nav
@@ -290,7 +297,7 @@ export default function Navbar({
               <div className="flex items-center gap-4">
 
                 <Link
-                  to="/account"
+                  to="/account" 
                   className="
                     flex
                     items-center
@@ -300,7 +307,7 @@ export default function Navbar({
 
                   <User size={22} />
 
-                  {user.name}
+                 {user?.name}
 
                 </Link>
 

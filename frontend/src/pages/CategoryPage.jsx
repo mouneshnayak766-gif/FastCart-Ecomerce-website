@@ -26,7 +26,16 @@ function CategoryPage() {
 
   return (
      <>
-    <Navbar />  
+    <Navbar
+  search=""
+  setSearch={() => {}}
+  selectedCategory=""
+  setSelectedCategory={() => {}}
+  sortOption=""
+  setSortOption={() => {}}
+  minRating=""
+  setMinRating={() => {}}
+/>  
     <CategoryBar />
     <div
   className="
