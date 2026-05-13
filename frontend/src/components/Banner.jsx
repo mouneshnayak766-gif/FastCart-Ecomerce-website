@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export default function Banner() {
-  const images = [
+ const images = [
     "https://img.freepik.com/premium-psd/mobile-sale-promotional-poster-design-template_987701-2675.jpg?w=2000",
     "https://tse2.mm.bing.net/th/id/OIP.45cRWwCT2N8sI9OjaPuTXAHaKe?rs=1&pid=ImgDetMain&o=7&rm=3",
     "https://img.freepik.com/premium-vector/men-wear-men-style-product-sale-banner-template_753208-23.jpg?w=2000",
