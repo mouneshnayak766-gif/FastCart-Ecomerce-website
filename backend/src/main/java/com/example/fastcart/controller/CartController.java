@@ -1,64 +1,155 @@
 package com.example.fastcart.controller;
 
-import com.example.fastcart.jwt.JwtUtil;
+
 import com.example.fastcart.model.Cart;
-import com.example.fastcart.repository.CartRepository;
+import com.example.fastcart.service.CartService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
-@CrossOrigin("http://localhost:5173")
+
 public class CartController {
 
-    @Autowired
-    private CartRepository cartRepository;
+   
+        @Autowired
+        private CartService cartService;
 
-    @PostMapping("/add")
-    public Cart addCart(
-            @RequestBody Cart cart,
-            @RequestHeader("Authorization")
-            String authHeader
-    ) {
+   @PostMapping("/add")
+public ResponseEntity<?> addCart(
 
-        String token =
-                authHeader.replace("Bearer ", "");
+        @RequestBody Cart cart,
 
-        Long userId =
-                JwtUtil.extractUserId(token);
+        @RequestHeader("Authorization")
+        String authHeader
 
-        cart.setUserId(userId);
+) {
 
-        cart.setTotalPrice(
-                cart.getPrice() * cart.getQuantity()
+    try {
+
+        Cart savedCart =
+                cartService.addCart(
+                        cart,
+                        authHeader
+                );
+
+        return ResponseEntity.ok(
+                savedCart
         );
 
-        return cartRepository.save(cart);
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
     }
+}
 
-    @GetMapping("/my-cart")
-    public List<Cart> getMyCart(
-            @RequestHeader("Authorization")
-            String authHeader
-    ) {
+   @GetMapping("/my-cart")
+public ResponseEntity<?> getMyCart(
 
-        String token =
-                authHeader.replace("Bearer ", "");
+        @RequestHeader("Authorization")
+        String authHeader
 
-        Long userId =
-                JwtUtil.extractUserId(token);
+) {
 
-        return cartRepository.findByUserId(userId);
+    try {
+
+        List<Cart> cart =
+                cartService.getMyCart(
+                        authHeader
+                );
+
+        return ResponseEntity.ok(cart);
+
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
     }
+}
+@DeleteMapping("/{id}")
+public ResponseEntity<?> deleteCart(
 
-    @DeleteMapping("/{id}")
-    public void deleteCart(
-            @PathVariable Long id
-    ) {
+        @PathVariable Long id,
 
-        cartRepository.deleteById(id);
+        @RequestHeader("Authorization")
+        String authHeader
+
+) {
+
+    try {
+
+        cartService.deleteCart(
+                id,
+                authHeader
+        );
+
+        return ResponseEntity.ok(
+                "Deleted Successfully"
+        );
+
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .status(400)
+                .body(e.getMessage());
     }
+}
+
+    @PutMapping("/increase/{id}")
+public ResponseEntity<?> increaseQuantity(
+
+        @PathVariable Long id
+
+) {
+
+    try {
+
+        Cart updatedCart =
+                cartService.increaseQuantity(id);
+
+        return ResponseEntity.ok(updatedCart);
+
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+    }
+}
+@PutMapping("/decrease/{id}")
+public ResponseEntity<?> decreaseQuantity(
+
+        @PathVariable Long id
+
+) {
+
+    try {
+
+        Cart updatedCart =
+                cartService.decreaseQuantity(id);
+
+        // ITEM REMOVED
+
+        if (updatedCart == null) {
+
+            return ResponseEntity
+                    .ok("Item Removed");
+        }
+
+        return ResponseEntity.ok(updatedCart);
+
+    } catch (Exception e) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(e.getMessage());
+    }
+}
 }

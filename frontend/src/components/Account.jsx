@@ -1,280 +1,142 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
+// BUG FIX: There were TWO different Account.jsx files uploaded.
+// This is the clean profile page version (the correct one for /account route).
+// The cart display that was inside the old Account.jsx has its own page (Cart.jsx).
 
 export default function Account() {
 
   const navigate = useNavigate();
 
-  const storedUser =
-    localStorage.getItem("user");
+  // BUG FIX: Safe JSON.parse — if localStorage value is corrupt,
+  // JSON.parse throws and crashes the whole page. Wrapped in try/catch.
+  let user = null;
+  try {
+    const stored = localStorage.getItem("user");
+    user = stored ? JSON.parse(stored) : null;
+  } catch {
+    user = null;
+  }
 
-  const user = storedUser
-    ? JSON.parse(storedUser)
-    : null;
-
-  const token =
-    localStorage.getItem("token");
-
-  const [cart, setCart] = useState([]);
-
-  // LOAD CART
+  // PROTECT PAGE — redirect to login if not logged in
   useEffect(() => {
-
-    if (!user || !token) {
-
+    if (!user) {
       navigate("/login");
-
-      return;
     }
-
-    axios.get(
-      "http://localhost:8081/api/cart/my-cart",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-
-    .then((response) => {
-
-      setCart(response.data);
-
-    })
-
-    .catch((error) => {
-
-      console.log(error);
-
-    });
-
   }, []);
 
-  // DELETE ITEM
-  const deleteCart = async (id) => {
+  if (!user) return null;
 
-    try {
-
-      await axios.delete(
-        `http://localhost:8081/api/cart/${id}`
-      );
-
-      setCart(
-        cart.filter((item) => item.id !== id)
-      );
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
+  // LOGOUT
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
-  // TOTAL PRICE
-  const totalPrice = cart.reduce(
-
-    (total, item) =>
-
-      total + item.price * item.quantity,
-
-    0
-  );
-
   return (
+    <div className="bg-gray-100 min-h-screen p-8">
 
-    <div className="bg-gray-100 min-h-screen p-6">
+      <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
 
-      {/* ACCOUNT */}
-
-      <div className="bg-white rounded-xl shadow p-6 mb-8">
-
-        <h1 className="text-3xl font-bold mb-6">
-          My Account
+        {/* TITLE */}
+        <h1 className="text-4xl font-bold mb-10 text-gray-800">
+          👤 My Profile
         </h1>
 
-        <div className="space-y-3 text-lg">
+        {/* USER DETAILS */}
+        <div className="grid md:grid-cols-2 gap-6 text-lg">
 
-          <p>
-            <strong>Name:</strong> {user?.name}
-          </p>
+          <div className="bg-gray-50 p-5 rounded-xl">
+            <p className="font-semibold text-gray-500">Name</p>
+            <h2 className="text-2xl font-bold mt-2">
+              {user.name || "—"}
+            </h2>
+          </div>
 
-          <p>
-            <strong>Email:</strong> {user?.email}
-          </p>
+          <div className="bg-gray-50 p-5 rounded-xl">
+            <p className="font-semibold text-gray-500">Email</p>
+            <h2 className="text-xl mt-2">
+              {user.email || "—"}
+            </h2>
+          </div>
 
-          <p>
-            <strong>Phone:</strong> {user?.phoneNumber}
-          </p>
+          <div className="bg-gray-50 p-5 rounded-xl">
+            <p className="font-semibold text-gray-500">Phone</p>
+            <h2 className="text-xl mt-2">
+              {/* BUG FIX: Backend returns phoneNumber (camelCase).
+                  The old code also checked phone_number (snake_case) as a
+                  fallback — unnecessary now that backend is standardised. */}
+              {user.phoneNumber || "—"}
+            </h2>
+          </div>
 
-          <p>
-            <strong>Address:</strong> {user?.address}
-          </p>
+          <div className="bg-gray-50 p-5 rounded-xl">
+            <p className="font-semibold text-gray-500">Address</p>
+            <h2 className="text-xl mt-2">
+              {user.address || "—"}
+            </h2>
+          </div>
 
         </div>
 
+        {/* NAVIGATION BUTTONS */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+
+          {/* BUG FIX: Was linking to "/Cart" and "/Wishlist" (capitals).
+              Changed to "/cart" and "/wishlist" to match fixed AppRoutes. */}
+
+          <Link
+            to="/cart"
+            className="
+              bg-blue-600 hover:bg-blue-700
+              text-white p-6 rounded-2xl
+              text-center font-bold text-2xl shadow
+            "
+          >
+            🛒<br />My Cart
+          </Link>
+
+          <Link
+            to="/wishlist"
+            className="
+              bg-pink-500 hover:bg-pink-600
+              text-white p-6 rounded-2xl
+              text-center font-bold text-2xl shadow
+            "
+          >
+            ❤️<br />Wishlist
+          </Link>
+
+          <Link
+            to="/orders"
+            className="
+              bg-green-600 hover:bg-green-700
+              text-white p-6 rounded-2xl
+              text-center font-bold text-2xl shadow
+            "
+          >
+            📦<br />Orders
+          </Link>
+
+        </div>
+
+        {/* LOGOUT */}
+        <div className="mt-12">
+          <button
+            onClick={logout}
+            className="
+              bg-red-500 hover:bg-red-600
+              text-white px-8 py-4
+              rounded-xl font-bold text-lg
+            "
+          >
+            Logout
+          </button>
+        </div>
+
       </div>
-
-      {/* CART TITLE */}
-
-      <div className="flex justify-between items-center mb-6">
-
-        <h2 className="text-3xl font-bold">
-          My Cart
-        </h2>
-
-        <h2 className="text-2xl font-bold text-green-600">
-          Total: ₹{totalPrice}
-        </h2>
-
-      </div>
-
-      {
-        cart.length === 0 ? (
-
-          <div className="bg-white p-10 rounded-xl shadow text-center">
-
-            <h1 className="text-3xl font-bold text-gray-600">
-              Cart Is Empty
-            </h1>
-
-          </div>
-
-        ) : (
-
-          <div className="space-y-6">
-
-            {
-              cart.map((item) => (
-
-                <div
-                  key={item.id}
-                  className="
-                    bg-white
-                    rounded-xl
-                    shadow-md
-                    p-6
-                    flex
-                    flex-col
-                    md:flex-row
-                    gap-6
-                  "
-                >
-
-                  {/* IMAGE */}
-
-                  <div className="w-full md:w-[220px]">
-
-                    <img
-                      src={`http://localhost:8081${item.imageUrl}`}
-                      alt={item.productName}
-                      className="
-                        w-full
-                        h-[220px]
-                        object-contain
-                      "
-                    />
-
-                  </div>
-
-                  {/* DETAILS */}
-
-                  <div className="flex-1">
-
-                    <h1 className="text-2xl font-bold">
-                      {item.productName}
-                    </h1>
-
-                    <p className="text-green-600 text-xl font-bold mt-2">
-                      ₹{item.price}
-                    </p>
-
-                    <div className="mt-3">
-
-                      <span
-                        className="
-                          bg-green-600
-                          text-white
-                          px-3
-                          py-1
-                          rounded
-                          text-sm
-                        "
-                      >
-                        ⭐ 4.3
-                      </span>
-
-                    </div>
-
-                    <p className="mt-4 text-gray-600">
-                      Delivery in 3 days 🚚
-                    </p>
-
-                    <p className="mt-2 text-green-700 font-semibold">
-                      In Stock
-                    </p>
-
-                    {/* QUANTITY */}
-
-                    <div className="mt-5 flex items-center gap-4">
-
-                      <h2 className="font-bold">
-                        Quantity:
-                      </h2>
-
-                      <div
-                        className="
-                          border
-                          px-4
-                          py-2
-                          rounded
-                          bg-gray-100
-                        "
-                      >
-                        {item.quantity}
-                      </div>
-
-                    </div>
-
-                    {/* SUBTOTAL */}
-
-                    <h2 className="mt-5 text-2xl font-bold text-blue-700">
-
-                      Subtotal:
-                      ₹{item.price * item.quantity}
-
-                    </h2>
-
-                    {/* REMOVE */}
-
-                    <button
-                      onClick={() =>
-                        deleteCart(item.id)
-                      }
-                      className="
-                        bg-red-500
-                        hover:bg-red-600
-                        text-white
-                        px-6
-                        py-3
-                        rounded-lg
-                        mt-6
-                        font-bold
-                      "
-                    >
-                      Remove Item
-                    </button>
-
-                  </div>
-
-                </div>
-              ))
-            }
-
-          </div>
-        )
-      }
-
     </div>
   );
 }

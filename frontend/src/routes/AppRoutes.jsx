@@ -7,11 +7,11 @@ import ProductDetail from "../pages/ProductDetail";
 import Login from "../components/login";
 import Signup from "../components/Signup";
 import Account from "../components/Account";
+import Wishlist from "../pages/Wishlist";
+import Cart from "../pages/Cart";
 
 export default function AppRoutes() {
-
   return (
-
     <Routes>
 
       <Route path="/" element={<Home />} />
@@ -26,20 +26,15 @@ export default function AppRoutes() {
         element={<ProductDetail />}
       />
 
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+      <Route path="/login"  element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/account" element={<Account />} />
 
-      <Route
-        path="/signup"
-        element={<Signup />}
-      />
-
-      <Route
-        path="/account"
-        element={<Account />}
-      />
+      {/* BUG FIX: Was "/Wishlist" and "/Cart" (capital letters).
+          React Router is case-sensitive — /wishlist and /Wishlist
+          are different routes. Standardised to lowercase. */}
+      <Route path="/wishlist" element={<Wishlist />} />
+      <Route path="/cart"     element={<Cart />} />
 
     </Routes>
   );

@@ -22,7 +22,13 @@ public class ProductService {
     public List<Product> getByCategory(String category) {
         return repo.findByCategory(category);
     }
-    public Product getProductById(Long id) {
-    return repo.findById(id).orElse(null);
+   public Product getProductById(Long id) {
+
+    return repo.findById(id)
+            .orElseThrow(() ->
+                    new RuntimeException(
+                            "Product Not Found"
+                    )
+            );
 }
 }
