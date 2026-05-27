@@ -23,9 +23,11 @@ public class WishlistService {
     // EXTRACT USER ID
     // =========================
     private Long extractUserId(String authHeader) {
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Invalid or missing token");
         }
+
         return JwtUtil.extractUserId(authHeader.substring(7));
     }
 
@@ -35,12 +37,26 @@ public class WishlistService {
     public Wishlist addWishlist(Wishlist wishlist, String authHeader) {
 
         Long userId = extractUserId(authHeader);
+
         wishlist.setUserId(userId);
 
         // Validate product exists before saving
         productRepository.findById(wishlist.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product Not Found"));
 
+        // CHECK IF PRODUCT ALREADY EXISTS IN WISHLIST
+        List<Wishlist> existingItems =
+                wishlistRepository.findAllByUserIdAndProductId(
+                        userId,
+                        wishlist.getProductId()
+                );
+
+        // PREVENT DUPLICATE ENTRY
+        if (!existingItems.isEmpty()) {
+            return existingItems.get(0);
+        }
+
+        // SAVE NEW ITEM
         return wishlistRepository.save(wishlist);
     }
 
@@ -48,7 +64,9 @@ public class WishlistService {
     // GET MY WISHLIST
     // =========================
     public List<Wishlist> getWishlist(String authHeader) {
+
         Long userId = extractUserId(authHeader);
+
         return wishlistRepository.findByUserId(userId);
     }
 
@@ -59,10 +77,6 @@ public class WishlistService {
 
         Long userId = extractUserId(authHeader);
 
-        // BUG FIX: WishlistRepository.findByUserIdAndProductId returns Optional<Wishlist>
-        // but the old code assigned it directly to Wishlist (not Optional) and then
-        // null-checked it — this ALWAYS threw a compile error or ClassCastException.
-        // Fixed to properly use .orElseThrow() on the Optional.
         Wishlist wishlist = wishlistRepository
                 .findByUserIdAndProductId(userId, productId)
                 .orElseThrow(() -> new RuntimeException(

@@ -20,4 +20,10 @@ public interface WishlistRepository
 
             Long productId
     );
+
+    // ADD THIS METHOD
+    List<Wishlist> findAllByUserIdAndProductId(
+            Long userId,
+            Long productId
+    );
 }

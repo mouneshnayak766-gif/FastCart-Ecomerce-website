@@ -78,12 +78,70 @@ export default function ProductDetail() {
   // =========================
   // FETCH PRODUCT
   // =========================
-  useEffect(() => {
-    axios
-      .get(`http://localhost:8081/api/products/${id}`)
-      .then((response) => setProduct(response.data))
-      .catch((error) => console.error(error));
-  }, [id]);
+  // =========================
+// FETCH PRODUCT + CHECK WISHLIST
+// =========================
+
+useEffect(() => {
+
+  // FETCH PRODUCT
+
+  axios
+    .get(`http://localhost:8081/api/products/${id}`)
+    .then((response) => {
+
+      setProduct(response.data);
+
+    })
+    .catch((error) => {
+
+      console.error(error);
+
+    });
+
+  // CHECK WISHLIST STATUS
+
+  const checkWishlistStatus = async () => {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
+
+    try {
+
+      const response = await axios.get(
+
+        "http://localhost:8081/api/wishlist/my-wishlist",
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const wishlistItems = response.data || [];
+
+      // CHECK PRODUCT EXISTS
+
+      const exists = wishlistItems.some(
+        (item) =>
+          item.productId === Number(id)
+      );
+
+      // UPDATE HEART STATE
+
+      setWishlistAdded(exists);
+
+    } catch (error) {
+
+      console.error(error);
+    }
+  };
+
+  checkWishlistStatus();
+
+}, [id]);
 
   // =========================
   // LOADING STATE
