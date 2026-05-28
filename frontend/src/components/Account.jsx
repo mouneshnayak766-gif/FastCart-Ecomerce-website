@@ -22,7 +22,7 @@ export default function Account() {
   // PROTECT PAGE — redirect to login if not logged in
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate("/");
     }
   }, []);
 
@@ -32,11 +32,12 @@ export default function Account() {
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
+              
+       <div className="bg-gray-100 min-h-screen p-8">
 
       <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
 
@@ -86,6 +87,12 @@ export default function Account() {
 
           {/* BUG FIX: Was linking to "/Cart" and "/Wishlist" (capitals).
               Changed to "/cart" and "/wishlist" to match fixed AppRoutes. */}
+          
+
+
+
+
+
 
           <Link
             to="/cart"
@@ -137,6 +144,8 @@ export default function Account() {
         </div>
 
       </div>
+   
+
     </div>
   );
 }

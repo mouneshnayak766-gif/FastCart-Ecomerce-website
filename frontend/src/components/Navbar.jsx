@@ -28,7 +28,7 @@ const user =
 
   localStorage.removeItem("token");
 
-  navigate("/login");
+  navigate("/");
 
 };
   return (
