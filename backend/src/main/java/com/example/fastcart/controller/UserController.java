@@ -124,4 +124,82 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
+// 1. GET PROFILE
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@RequestAttribute("userId") Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        // Return safe user data without password
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", user.getId());
+        userData.put("name", user.getName());
+        userData.put("email", user.getEmail());
+        userData.put("phoneNumber", user.getPhoneNumber());
+        userData.put("address", user.getAddress());
+
+        return ResponseEntity.ok(userData);
+    }
+
+    // 2. UPDATE PROFILE
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestAttribute("userId") Long userId,
+            @RequestBody User updatedData
+    ) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        // Update fields safely
+        user.setName(updatedData.getName());
+        user.setPhoneNumber(updatedData.getPhoneNumber());
+        user.setAddress(updatedData.getAddress());
+
+        userRepository.save(user);
+
+        // Prepare updated safe response data
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", user.getId());
+        userData.put("name", user.getName());
+        userData.put("email", user.getEmail());
+        userData.put("phoneNumber", user.getPhoneNumber());
+        userData.put("address", user.getAddress());
+
+        return ResponseEntity.ok(userData);
+    }
+
+    // 3. CHANGE PASSWORD
+    @PutMapping("/profile/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestAttribute("userId") Long userId,
+            @RequestBody Map<String, String> passwordData
+    ) {
+        String currentPassword = passwordData.get("currentPassword");
+        String newPassword = passwordData.get("newPassword");
+
+        if (currentPassword == null || newPassword == null) {
+            return ResponseEntity.badRequest().body("Both current and new passwords are required");
+        }
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        // Verify current password
+        if (!encoder.matches(currentPassword, user.getPassword())) {
+            return ResponseEntity.status(401).body("Incorrect current password");
+        }
+
+        // Encrypt and save new password
+        user.setPassword(encoder.encode(newPassword));
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
 }

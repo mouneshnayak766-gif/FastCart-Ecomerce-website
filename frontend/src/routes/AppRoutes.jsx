@@ -9,6 +9,8 @@ import Signup from "../components/Signup";
 import Account from "../components/Account";
 import Wishlist from "../pages/Wishlist";
 import Cart from "../pages/Cart";
+import Checkout from "../pages/Checkout";
+import Orders from "../pages/Order";``
 
 export default function AppRoutes() {
   return (
@@ -35,7 +37,8 @@ export default function AppRoutes() {
           are different routes. Standardised to lowercase. */}
       <Route path="/wishlist" element={<Wishlist />} />
       <Route path="/cart"     element={<Cart />} />
-
+       <Route path="/checkout" element={<Checkout />} />
+      <Route path="/orders"   element={<Orders />} />
     </Routes>
   );
 }

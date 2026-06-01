@@ -37,4 +37,8 @@ public class JwtUtil {
 
         return Long.parseLong(claims.getSubject());
     }
+
+    public static Long getUserIdFromToken(String token) {
+    return extractUserId(token);
+}
 }

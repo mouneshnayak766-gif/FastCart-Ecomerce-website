@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CategoryBar from "../components/CategoryBar";
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // =========================
   // STATE
@@ -48,6 +49,36 @@ export default function ProductDetail() {
   };
 
   // =========================
+  // BUY NOW HANDLER
+  // =========================
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    const { token, user } = getAuthData();
+    if (!user || !token) {
+      alert("Please login to proceed with your purchase!");
+      navigate("/login");
+      return;
+    }
+
+    // Navigate instantly to checkout with product context
+    navigate("/checkout", {
+      state: {
+        items: [
+          {
+            productId: product.id,
+            productName: product.name,
+            imageUrl: product.imageUrl,
+            quantity: 1,
+            price: product.price,
+          },
+        ],
+        checkoutType: "SINGLE_PRODUCT",
+      },
+    });
+  };
+
+  // =========================
   // WISHLIST HANDLER
   // =========================
   const toggleWishlist = async () => {
@@ -76,72 +107,40 @@ export default function ProductDetail() {
   };
 
   // =========================
-  // FETCH PRODUCT
+  // FETCH PRODUCT + CHECK WISHLIST
   // =========================
-  // =========================
-// FETCH PRODUCT + CHECK WISHLIST
-// =========================
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8081/api/products/${id}`)
+      .then((response) => {
+        setProduct(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-useEffect(() => {
+    const checkWishlistStatus = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-  // FETCH PRODUCT
+      try {
+        const response = await axios.get(
+          "http://localhost:8081/api/wishlist/my-wishlist",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-  axios
-    .get(`http://localhost:8081/api/products/${id}`)
-    .then((response) => {
+        const wishlistItems = response.data || [];
+        const exists = wishlistItems.some(
+          (item) => item.productId === Number(id)
+        );
+        setWishlistAdded(exists);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-      setProduct(response.data);
-
-    })
-    .catch((error) => {
-
-      console.error(error);
-
-    });
-
-  // CHECK WISHLIST STATUS
-
-  const checkWishlistStatus = async () => {
-
-    const token = localStorage.getItem("token");
-
-    if (!token) return;
-
-    try {
-
-      const response = await axios.get(
-
-        "http://localhost:8081/api/wishlist/my-wishlist",
-
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const wishlistItems = response.data || [];
-
-      // CHECK PRODUCT EXISTS
-
-      const exists = wishlistItems.some(
-        (item) =>
-          item.productId === Number(id)
-      );
-
-      // UPDATE HEART STATE
-
-      setWishlistAdded(exists);
-
-    } catch (error) {
-
-      console.error(error);
-    }
-  };
-
-  checkWishlistStatus();
-
-}, [id]);
+    checkWishlistStatus();
+  }, [id]);
 
   // =========================
   // LOADING STATE
@@ -161,7 +160,6 @@ useEffect(() => {
         <div className="bg-white rounded-xl shadow-lg p-8 flex flex-col md:flex-row gap-10">
           {/* LEFT IMAGE SECTION */}
           <div className="flex-1">
-            {/* IMAGE + HEART */}
             <div className="flex gap-4 items-start">
               <img
                 src={`http://localhost:8081${product.imageUrl}`}
@@ -196,6 +194,7 @@ useEffect(() => {
               </button>
 
               <button
+                onClick={handleBuyNow}
                 className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg font-bold w-full"
               >
                 Buy Now ⚡
