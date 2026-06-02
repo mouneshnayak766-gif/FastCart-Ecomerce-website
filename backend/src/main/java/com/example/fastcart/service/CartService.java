@@ -161,6 +161,16 @@ public class CartService {
     }
 
     // =========================
+    // CLEAR ALL CART ITEMS
+    // =========================
+
+    public void clearCart(String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = JwtUtil.extractUserId(token);
+        cartRepository.deleteAllByUserId(userId);
+    }
+
+    // =========================
     // INCREASE QUANTITY
     // =========================
 

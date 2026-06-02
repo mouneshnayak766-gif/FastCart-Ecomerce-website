@@ -10,7 +10,9 @@ import Account from "../components/Account";
 import Wishlist from "../pages/Wishlist";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
-import Orders from "../pages/Order";``
+import Orders from "../pages/Order";
+import AdminLogin from "../pages/AdminLogin";
+import AdminDashboard from "../pages/AdminDashboard";
 
 export default function AppRoutes() {
   return (
@@ -39,6 +41,8 @@ export default function AppRoutes() {
       <Route path="/cart"     element={<Cart />} />
        <Route path="/checkout" element={<Checkout />} />
       <Route path="/orders"   element={<Orders />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
     </Routes>
   );
 }

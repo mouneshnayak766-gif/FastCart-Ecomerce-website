@@ -39,4 +39,17 @@ public class OrderController {
             return ResponseEntity.status(401).body(e.getMessage());
         }
     }
+
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<?> cancelOrder(
+            @PathVariable Long orderId,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        try {
+            Order cancelled = orderService.cancelOrder(orderId, authHeader);
+            return ResponseEntity.ok(cancelled);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

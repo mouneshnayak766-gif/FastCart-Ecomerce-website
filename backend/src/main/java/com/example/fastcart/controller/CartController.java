@@ -102,6 +102,18 @@ public ResponseEntity<?> deleteCart(
     }
 }
 
+    @DeleteMapping("/clear")
+    public ResponseEntity<?> clearCart(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        try {
+            cartService.clearCart(authHeader);
+            return ResponseEntity.ok("Cart cleared successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/increase/{id}")
 public ResponseEntity<?> increaseQuantity(
 

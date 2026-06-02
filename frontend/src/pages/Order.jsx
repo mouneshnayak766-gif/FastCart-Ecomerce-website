@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import API from "../service/api";
 
 export default function Orders() {
   const location = useLocation();
@@ -9,26 +10,27 @@ export default function Orders() {
   const [showSuccessAlert, setShowSuccessAlert] = useState(location.state?.orderSuccess || false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    const fetchOrders = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-    fetch("/api/orders/my-orders", {
-      headers: { "Authorization": `Bearer ${token}` }
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to resolve dynamic data assets.");
-        return res.json();
-      })
-      .then((data) => {
-        setOrders(data);
+      try {
+        const response = await API.get("/orders/my-orders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Unable to load orders", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    };
 
-    // Automatically hide success notification alert after timeout
+    fetchOrders();
+
     if (showSuccessAlert) {
       window.history.replaceState({}, document.title);
       const timer = setTimeout(() => setShowSuccessAlert(false), 5000);
@@ -88,7 +90,7 @@ export default function Orders() {
                   </div>
                   <div>
                     <p className="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Collection Balance</p>
-                    <p className="text-xl font-bold text-green-600">${order.totalAmount.toFixed(2)}</p>
+                    <p className="text-xl font-bold text-green-600">₹{order.totalAmount.toFixed(2)}</p>
                   </div>
                 </div>
 
@@ -105,7 +107,7 @@ export default function Orders() {
                         <h4 className="font-bold text-gray-800">{item.productName}</h4>
                         <p className="text-gray-500 text-sm">Quantity Count: {item.quantity}</p>
                       </div>
-                      <p className="font-bold text-gray-700">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-bold text-gray-700">₹{(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>

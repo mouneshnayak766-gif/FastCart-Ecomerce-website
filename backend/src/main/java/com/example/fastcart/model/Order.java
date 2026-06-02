@@ -19,7 +19,7 @@ public class Order {
     private String orderStatus;    // e.g., "PENDING", "SHIPPED", "DELIVERED"
     private LocalDateTime orderDate;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private List<OrderItem> orderItems;
 

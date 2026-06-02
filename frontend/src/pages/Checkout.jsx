@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import API from "../service/api";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function Checkout() {
       navigate("/");
       return;
     }
-  }, [user, orderItems, navigate]);
+  }, [user, orderItems.length, navigate]);
 
   if (!user || orderItems.length === 0) return null;
 
@@ -64,41 +65,36 @@ export default function Checkout() {
 
     const orderPayload = {
       shippingAddress: shippingAddress,
-      orderItems: orderItems, // Send the standardized array of order items to backend
+      orderItems: orderItems,
     };
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8081/api/orders/place", {
-        method: "POST",
+      const response = await API.post("/orders/place", orderPayload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(orderPayload),
       });
 
-      if (response.ok) {
-        // EXTRA OPTION: Clear database cart if completing a cart bundle checkout checkout layout
+      if (response.status === 200) {
         if (checkoutType === "CART_FLOW") {
           try {
-            await fetch("http://localhost:8081/api/cart/clear", {
-              method: "DELETE",
+            await API.delete("/cart/clear", {
               headers: { Authorization: `Bearer ${token}` },
             });
           } catch (clearErr) {
-            console.error("Cart cleanup omitted: ", clearErr);
+            console.error("Cart cleanup skipped: ", clearErr);
           }
         }
 
-        // Redirect to orders overview dashboard
         navigate("/orders", { state: { orderSuccess: true } });
       } else {
-        const errMsg = await response.text();
-        setError(errMsg || "An error occurred while routing transaction context.");
+        setError("Failed to place order.");
       }
     } catch (err) {
-      setError("Network dependency execution failure.");
+      console.error(err);
+      setError("Unable to place order. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -107,7 +103,7 @@ export default function Checkout() {
   return (
     <div className="bg-gray-100 min-h-screen p-8">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">📋 Order Verification Invoice</h1>
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">Checkout</h1>
 
         {error && (
           <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-xl font-medium">
@@ -157,7 +153,7 @@ export default function Checkout() {
                   required
                   value={shippingAddress}
                   onChange={(e) => setShippingAddress(e.target.value)}
-                  placeholder="Enter explicit street delivery address details..."
+                  placeholder="Enter your shipping address"
                   className="w-full p-3 rounded-xl border border-gray-300 focus:outline-blue-500"
                 ></textarea>
               </div>
