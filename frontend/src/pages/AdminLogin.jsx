@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../service/api"; // Adjust path to your central Axios client instance
+import API from "../service/api"; 
 
 export default function AdminLogin() {
   const navigate = useNavigate();
