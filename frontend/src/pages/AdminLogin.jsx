@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../service/api"; 
+import { useEffect } from "react";
 
 export default function AdminLogin() {
-  const navigate = useNavigate();
+ const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+
+    if (token) {
+        navigate("/admin/dashboard");
+    }
+}, []);
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

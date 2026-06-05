@@ -21,9 +21,10 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    // FIX: Was repo.findByCategory(category) — that method does not exist in ProductRepository.
-    //      The declared method is findByCategoryIgnoreCase(). Using the wrong name causes a
-    //      Spring Data query-derivation exception at application startup, not at runtime.
+    public List<String> getCategories() {
+        return productRepository.findDistinctCategory();
+    }
+
     public List<Product> getByCategory(String category) {
         return productRepository.findByCategoryIgnoreCase(category);
     }

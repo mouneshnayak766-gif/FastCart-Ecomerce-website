@@ -64,7 +64,7 @@ public class AdminController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("http://localhost:8082/api/users/login"));
+        headers.setLocation(URI.create("http://localhost:8081/api/users/login"));
         return new ResponseEntity<>(Map.of("message", "Logout completed. Redirecting..."), headers, HttpStatus.SEE_OTHER);
     }
 

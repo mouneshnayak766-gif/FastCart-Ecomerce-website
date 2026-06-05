@@ -1,15 +1,31 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../service/api";
+import { jwtDecode } from "jwt-decode";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const token = localStorage.getItem("adminToken");
+  const decoded = jwtDecode(token);
+  const isTokenExpired = (token) => {
+    try {
+        const decoded = jwtDecode(token);
+        return decoded.exp * 1000 < Date.now();
+    } catch {
+        return true;
+    }
+};
+useEffect(() => {
+    if (!token || isTokenExpired(token)) {
+        localStorage.removeItem("adminToken");
+        navigate("/admin/login");
+    }
+}, []);
 
   // Authentication Route Guard
   useEffect(() => {
     if (!token) {
-      window.location.replace("http://localhost:8082/api/users/login");
+      window.location.replace("http://localhost:8081/api/users/login");
     }
   }, [token]);
 
@@ -49,7 +65,7 @@ export default function AdminDashboard() {
       console.error("Backend redirect tracking detached", err);
     } finally {
       localStorage.removeItem("adminToken");
-      window.location.replace("http://localhost:8082/api/users/login");
+      window.location.replace("http://localhost:8081/api/users/login");
     }
   };
 
@@ -75,7 +91,8 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error("Data Synchronization Failure:", err);
-      if (err.response?.status === 403) handleLogout();
+      if (err.response?.status === 401 ||
+        err.response?.status === 403) handleLogout();
     } finally {
       setLoading(false);
     }

@@ -107,7 +107,20 @@ export default function Account() {
 
   return (
     <div className="bg-gray-100 min-h-screen p-8">
-      <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+     
+        
+         <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+          {/* CATEGORY BAR */}
+<div className="flex gap-3 overflow-x-auto mb-6 pb-2">
+  <button
+    onClick={() => navigate("/")}
+   className="px-4 py-1.5 rounded-full bg-blue-600 text-white text-sm whitespace-nowrap hover:bg-blue-700"
+>
+    Home
+  </button>
+
+ 
+</div>
         
         {/* HEADER & NOTIFICATION */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
