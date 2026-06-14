@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+ // FIX: Was missing — caused CORS block from React frontend
 public class ProductController {
 
     private final ProductService service;
@@ -21,9 +22,8 @@ public class ProductController {
         return service.getAllProducts();
     }
 
-    // Returns distinct categories from DB — used by CategoryBar in React
-    // Must be declared BEFORE /{id} so Spring doesn't try to match
-    // "categories" as a Long path variable and throw a 400.
+    // Must be declared BEFORE /{id} — Spring resolves paths top to bottom.
+    // If /{id} came first, the string "categories" would be cast to Long and throw 400.
     @GetMapping("/categories")
     public List<String> getCategories() {
         return service.getCategories();

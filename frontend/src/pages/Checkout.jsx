@@ -69,7 +69,12 @@ export default function Checkout() {
     };
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       const response = await API.post("/orders/place", orderPayload, {
         headers: {
           "Content-Type": "application/json",

@@ -5,7 +5,7 @@ import API from "../service/api";
 export default function Cart() {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   // FETCH CART
   useEffect(() => {

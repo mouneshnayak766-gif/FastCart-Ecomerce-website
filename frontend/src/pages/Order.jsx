@@ -11,7 +11,7 @@ export default function Orders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         navigate("/login");
         return;

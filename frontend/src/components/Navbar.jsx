@@ -25,8 +25,8 @@ const user =
  const logout = () => {
 
   localStorage.removeItem("user");
-
-  localStorage.removeItem("token");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
 
   navigate("/");
 

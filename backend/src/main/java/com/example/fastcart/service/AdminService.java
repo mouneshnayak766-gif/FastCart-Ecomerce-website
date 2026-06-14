@@ -2,7 +2,6 @@ package com.example.fastcart.service;
 
 import com.example.fastcart.dto.DashboardStats;
 import com.example.fastcart.dto.UserHistoryProfile;
-import com.example.fastcart.jwt.JwtUtil;
 import com.example.fastcart.model.Order;
 import com.example.fastcart.model.OrderItem;
 import com.example.fastcart.model.Product;
@@ -36,12 +35,9 @@ public class AdminService {
     @Autowired
     private UserRepository userRepository;
 
-    // ---------------------------------------------------------------------------
-    // Credentials externalized to application.properties — never hardcode secrets
-    // Add these to your application.properties:
+    // Add to application.properties:
     //   admin.email=admin123@gmail.com
-    //   admin.password=7022005
-    // ---------------------------------------------------------------------------
+    //   admin.password=yourpassword
     @Value("${admin.email}")
     private String adminEmail;
 
@@ -52,20 +48,13 @@ public class AdminService {
 
     private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
-    // ---------------------------------------------------------------------------
-    // AUTH
-    // ---------------------------------------------------------------------------
+    // ── AUTH ──────────────────────────────────────────────────────────────────
 
-    public String loginAdmin(String email, String password) {
-        if (adminEmail.equalsIgnoreCase(email) && adminPassword.equals(password)) {
-            return JwtUtil.generateToken(ADMIN_SYSTEM_ID);
-        }
-        return null;
+    public boolean isValidAdmin(String email, String password) {
+        return adminEmail.equalsIgnoreCase(email) && adminPassword.equals(password);
     }
 
-    // ---------------------------------------------------------------------------
-    // DASHBOARD STATS
-    // ---------------------------------------------------------------------------
+    // ── DASHBOARD ─────────────────────────────────────────────────────────────
 
     public DashboardStats getDashboardStats() {
         long totalProducts = productRepository.count();
@@ -75,23 +64,22 @@ public class AdminService {
         List<Order> allOrders = orderRepository.findAll();
 
         double totalRevenue = allOrders.stream()
-                .filter(o -> !"CANCELLED".equals(o.getOrderStatus()) && !"REFUNDED".equals(o.getOrderStatus()))
+                .filter(o -> !"CANCELLED".equals(o.getOrderStatus())
+                          && !"REFUNDED".equals(o.getOrderStatus()))
                 .mapToDouble(Order::getTotalAmount)
                 .sum();
 
-        // Top 10 recent orders
         List<Order> recentOrders = orderRepository.findTop10ByOrderByOrderDateDesc();
 
-        // Monthly revenue breakdown  (key format: YYYY-MM)
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
         Map<String, Double> monthlyRevenue = allOrders.stream()
-                .filter(o -> !"CANCELLED".equals(o.getOrderStatus()) && !"REFUNDED".equals(o.getOrderStatus()))
+                .filter(o -> !"CANCELLED".equals(o.getOrderStatus())
+                          && !"REFUNDED".equals(o.getOrderStatus()))
                 .collect(Collectors.groupingBy(
                         o -> o.getOrderDate().format(formatter),
                         Collectors.summingDouble(Order::getTotalAmount)
                 ));
 
-        // Top 5 selling products
         Map<Long, Integer> productQuantities = allOrders.stream()
                 .flatMap(o -> o.getOrderItems().stream())
                 .collect(Collectors.groupingBy(
@@ -110,7 +98,6 @@ public class AdminService {
                     map.put("unitsSold", entry.getValue());
                     return map;
                 })
-                // FIX: Collectors.filterNotNull() does not exist — use filter(Objects::nonNull)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
@@ -120,27 +107,19 @@ public class AdminService {
         );
     }
 
-    // ---------------------------------------------------------------------------
-    // FILE UPLOAD
-    // ---------------------------------------------------------------------------
+    // ── FILE UPLOAD ───────────────────────────────────────────────────────────
 
     public String saveUploadedImage(MultipartFile file) throws IOException {
-        if (file.isEmpty()) {
-            throw new IllegalArgumentException("Cannot save an empty file.");
-        }
+        if (file.isEmpty()) throw new IllegalArgumentException("Cannot save an empty file.");
         File directory = new File(UPLOAD_DIR);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
+        if (!directory.exists()) directory.mkdirs();
         String uniqueFilename = UUID.randomUUID() + "_" + file.getOriginalFilename();
         Path path = Paths.get(UPLOAD_DIR + uniqueFilename);
         Files.write(path, file.getBytes());
         return "/uploads/" + uniqueFilename;
     }
 
-    // ---------------------------------------------------------------------------
-    // PRODUCT MANAGEMENT
-    // ---------------------------------------------------------------------------
+    // ── PRODUCTS ──────────────────────────────────────────────────────────────
 
     public Product addProduct(Product product) {
         return productRepository.save(product);
@@ -179,9 +158,7 @@ public class AdminService {
         return false;
     }
 
-    // ---------------------------------------------------------------------------
-    // ORDER MANAGEMENT
-    // ---------------------------------------------------------------------------
+    // ── ORDERS ────────────────────────────────────────────────────────────────
 
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -212,9 +189,7 @@ public class AdminService {
         });
     }
 
-    // ---------------------------------------------------------------------------
-    // USER AUDIT
-    // ---------------------------------------------------------------------------
+    // ── USER AUDIT ────────────────────────────────────────────────────────────
 
     public List<UserHistoryProfile> getAllUsersWithHistory() {
         return userRepository.findAll().stream()

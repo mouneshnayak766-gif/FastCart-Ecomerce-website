@@ -18,8 +18,7 @@ public class OrderController {
     @PostMapping("/place")
     public ResponseEntity<?> placeOrder(
             @RequestBody Order orderRequest,
-            @RequestHeader("Authorization") String authHeader
-    ) {
+            @RequestHeader("Authorization") String authHeader) {
         try {
             Order savedOrder = orderService.placeOrder(orderRequest, authHeader);
             return ResponseEntity.ok(savedOrder);
@@ -30,8 +29,7 @@ public class OrderController {
 
     @GetMapping("/my-orders")
     public ResponseEntity<?> getMyOrders(
-            @RequestHeader("Authorization") String authHeader
-    ) {
+            @RequestHeader("Authorization") String authHeader) {
         try {
             List<Order> orders = orderService.getMyOrders(authHeader);
             return ResponseEntity.ok(orders);
@@ -40,11 +38,12 @@ public class OrderController {
         }
     }
 
-    @PutMapping("/cancel/{orderId}")
+    // FIX: Was @PutMapping — cancel is a state-transition action, not a resource update.
+    //      POST is semantically correct here. PUT means "replace this resource with what I'm sending".
+    @PostMapping("/cancel/{orderId}")
     public ResponseEntity<?> cancelOrder(
             @PathVariable Long orderId,
-            @RequestHeader("Authorization") String authHeader
-    ) {
+            @RequestHeader("Authorization") String authHeader) {
         try {
             Order cancelled = orderService.cancelOrder(orderId, authHeader);
             return ResponseEntity.ok(cancelled);

@@ -17,7 +17,7 @@ export default function Wishlist() {
     user = null;
   }
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   useEffect(() => {
     fetchWishlist();

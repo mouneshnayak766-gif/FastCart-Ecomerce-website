@@ -17,7 +17,7 @@ export default function ProductDetail() {
   // HELPERS
   // =========================
   const getAuthData = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     const user = JSON.parse(localStorage.getItem("user"));
     return { token, user };
   };
@@ -120,7 +120,7 @@ export default function ProductDetail() {
       });
 
     const checkWishlistStatus = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (!token) return;
 
       try {
