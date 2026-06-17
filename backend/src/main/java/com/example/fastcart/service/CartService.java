@@ -15,13 +15,14 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
-    // FIX: All four methods were calling JwtUtil.extractUserId() which doesn't exist.
-    //      Correct method name throughout this codebase is JwtUtil.getUserIdFromToken().
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private Long extractUserId(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Invalid or missing Authorization token");
         }
-        return JwtUtil.getUserIdFromToken(authHeader.substring(7));
+        return jwtUtil.extractUserId(authHeader.substring(7));
     }
 
     // ADD TO CART
@@ -77,9 +78,14 @@ public class CartService {
     }
 
     // INCREASE QUANTITY
-    public Cart increaseQuantity(Long id) {
+    public Cart increaseQuantity(Long id, String authHeader) {
+        Long userId = extractUserId(authHeader);
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cart Item Not Found"));
+
+        if (!cart.getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized Access");
+        }
 
         if (cart.getQuantity() >= 10) {
             throw new RuntimeException("Maximum quantity is 10");
@@ -92,9 +98,14 @@ public class CartService {
     }
 
     // DECREASE QUANTITY — removes item if quantity reaches 0
-    public Cart decreaseQuantity(Long id) {
+    public Cart decreaseQuantity(Long id, String authHeader) {
+        Long userId = extractUserId(authHeader);
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cart Item Not Found"));
+
+        if (!cart.getUserId().equals(userId)) {
+            throw new RuntimeException("Unauthorized Access");
+        }
 
         if (cart.getQuantity() <= 1) {
             cartRepository.delete(cart);

@@ -24,6 +24,9 @@ public class UserController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     // ── SIGNUP ────────────────────────────────────────────────────────────────
@@ -56,8 +59,8 @@ public class UserController {
             return ResponseEntity.status(401).body("Invalid Password");
         }
 
-        String accessToken = JwtUtil.generateAccessToken(user.getId());
-        RefreshToken refreshToken = authService.createRefreshToken(user.getId());
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
+        RefreshToken refreshToken = authService.createRefreshToken(user.getId(), false);
 
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", accessToken);
@@ -93,63 +96,83 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
+    private Long extractUserId(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Missing or invalid Authorization header");
+        }
+        return jwtUtil.extractUserId(authHeader.substring(7));
+    }
+
     // ── PROFILE ───────────────────────────────────────────────────────────────
 
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(@RequestAttribute("userId") Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return ResponseEntity.status(404).body("User not found");
+    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authHeader) {
+        try {
+            Long userId = extractUserId(authHeader);
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null) return ResponseEntity.status(404).body("User not found");
 
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("id", user.getId());
-        userData.put("name", user.getName());
-        userData.put("email", user.getEmail());
-        userData.put("phoneNumber", user.getPhoneNumber());
-        userData.put("address", user.getAddress());
-        return ResponseEntity.ok(userData);
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("name", user.getName());
+            userData.put("email", user.getEmail());
+            userData.put("phoneNumber", user.getPhoneNumber());
+            userData.put("address", user.getAddress());
+            return ResponseEntity.ok(userData);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid or missing token");
+        }
     }
 
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(
-            @RequestAttribute("userId") Long userId,
+            @RequestHeader("Authorization") String authHeader,
             @RequestBody User updatedData) {
+        try {
+            Long userId = extractUserId(authHeader);
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null) return ResponseEntity.status(404).body("User not found");
 
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return ResponseEntity.status(404).body("User not found");
+            user.setName(updatedData.getName());
+            user.setPhoneNumber(updatedData.getPhoneNumber());
+            user.setAddress(updatedData.getAddress());
+            userRepository.save(user);
 
-        user.setName(updatedData.getName());
-        user.setPhoneNumber(updatedData.getPhoneNumber());
-        user.setAddress(updatedData.getAddress());
-        userRepository.save(user);
-
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("id", user.getId());
-        userData.put("name", user.getName());
-        userData.put("email", user.getEmail());
-        userData.put("phoneNumber", user.getPhoneNumber());
-        userData.put("address", user.getAddress());
-        return ResponseEntity.ok(userData);
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("name", user.getName());
+            userData.put("email", user.getEmail());
+            userData.put("phoneNumber", user.getPhoneNumber());
+            userData.put("address", user.getAddress());
+            return ResponseEntity.ok(userData);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid or missing token");
+        }
     }
 
     @PutMapping("/profile/change-password")
     public ResponseEntity<?> changePassword(
-            @RequestAttribute("userId") Long userId,
+            @RequestHeader("Authorization") String authHeader,
             @RequestBody Map<String, String> passwordData) {
+        try {
+            Long userId = extractUserId(authHeader);
+            String currentPassword = passwordData.get("currentPassword");
+            String newPassword = passwordData.get("newPassword");
 
-        String currentPassword = passwordData.get("currentPassword");
-        String newPassword = passwordData.get("newPassword");
+            if (currentPassword == null || newPassword == null) {
+                return ResponseEntity.badRequest().body("Both current and new passwords are required");
+            }
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null) return ResponseEntity.status(404).body("User not found");
 
-        if (currentPassword == null || newPassword == null) {
-            return ResponseEntity.badRequest().body("Both current and new passwords are required");
+            if (!encoder.matches(currentPassword, user.getPassword())) {
+                return ResponseEntity.status(401).body("Incorrect current password");
+            }
+            user.setPassword(encoder.encode(newPassword));
+            userRepository.save(user);
+            return ResponseEntity.ok("Password updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Invalid or missing token");
         }
-        User user = userRepository.findById(userId).orElse(null);
-        if (user == null) return ResponseEntity.status(404).body("User not found");
-
-        if (!encoder.matches(currentPassword, user.getPassword())) {
-            return ResponseEntity.status(401).body("Incorrect current password");
-        }
-        user.setPassword(encoder.encode(newPassword));
-        userRepository.save(user);
-        return ResponseEntity.ok("Password updated successfully");
     }
 }

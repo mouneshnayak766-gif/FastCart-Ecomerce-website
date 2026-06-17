@@ -117,14 +117,15 @@ public ResponseEntity<?> deleteCart(
     @PutMapping("/increase/{id}")
 public ResponseEntity<?> increaseQuantity(
 
-        @PathVariable Long id
+        @PathVariable Long id,
+        @RequestHeader("Authorization") String authHeader
 
 ) {
 
     try {
 
         Cart updatedCart =
-                cartService.increaseQuantity(id);
+                cartService.increaseQuantity(id, authHeader);
 
         return ResponseEntity.ok(updatedCart);
 
@@ -138,14 +139,15 @@ public ResponseEntity<?> increaseQuantity(
 @PutMapping("/decrease/{id}")
 public ResponseEntity<?> decreaseQuantity(
 
-        @PathVariable Long id
+        @PathVariable Long id,
+        @RequestHeader("Authorization") String authHeader
 
 ) {
 
     try {
 
         Cart updatedCart =
-                cartService.decreaseQuantity(id);
+                cartService.decreaseQuantity(id, authHeader);
 
         // ITEM REMOVED
 

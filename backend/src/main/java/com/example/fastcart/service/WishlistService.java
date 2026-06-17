@@ -18,12 +18,14 @@ public class WishlistService {
     @Autowired
     private ProductRepository productRepository;
 
-    // FIX: Was JwtUtil.extractUserId() — correct method is JwtUtil.getUserIdFromToken()
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private Long extractUserId(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Invalid or missing token");
         }
-        return JwtUtil.getUserIdFromToken(authHeader.substring(7));
+        return jwtUtil.extractUserId(authHeader.substring(7));
     }
 
     // ADD TO WISHLIST

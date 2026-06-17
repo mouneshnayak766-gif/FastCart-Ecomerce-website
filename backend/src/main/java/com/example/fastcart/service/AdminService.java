@@ -12,6 +12,7 @@ import com.example.fastcart.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -175,15 +176,57 @@ public class AdminService {
         });
     }
 
+    @Transactional
     public Optional<Order> cancelOrder(Long orderId) {
         return orderRepository.findById(orderId).map(order -> {
+            if ("CANCELLED".equals(order.getOrderStatus()) || "REFUNDED".equals(order.getOrderStatus())) {
+                return order;
+            }
+
+            if (order.getOrderItems() != null) {
+                for (OrderItem item : order.getOrderItems()) {
+                    if (item == null || item.getProductId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
+                        continue;
+                    }
+                    Product product = productRepository.findById(item.getProductId())
+                            .orElseThrow(() -> new RuntimeException(
+                                    "Product not found for restoration: " + item.getProductId()));
+                    if (product.getStock() == null) {
+                        product.setStock(0);
+                    }
+                    product.setStock(product.getStock() + item.getQuantity());
+                    productRepository.save(product);
+                }
+            }
+
             order.setOrderStatus("CANCELLED");
             return orderRepository.save(order);
         });
     }
 
+    @Transactional
     public Optional<Order> refundOrder(Long orderId) {
         return orderRepository.findById(orderId).map(order -> {
+            if ("REFUNDED".equals(order.getOrderStatus())) {
+                return order;
+            }
+
+            if (order.getOrderItems() != null) {
+                for (OrderItem item : order.getOrderItems()) {
+                    if (item == null || item.getProductId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
+                        continue;
+                    }
+                    Product product = productRepository.findById(item.getProductId())
+                            .orElseThrow(() -> new RuntimeException(
+                                    "Product not found for restoration: " + item.getProductId()));
+                    if (product.getStock() == null) {
+                        product.setStock(0);
+                    }
+                    product.setStock(product.getStock() + item.getQuantity());
+                    productRepository.save(product);
+                }
+            }
+
             order.setOrderStatus("REFUNDED");
             return orderRepository.save(order);
         });

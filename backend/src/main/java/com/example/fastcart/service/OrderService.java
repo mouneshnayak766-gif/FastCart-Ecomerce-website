@@ -29,13 +29,13 @@ public class OrderService {
     @Autowired
     private CartRepository cartRepository;
 
-    // -----------------------------------------------------------------------
-    // FIX 1: Was JwtUtil.extractUserId() — the codebase uses getUserIdFromToken()
-    // -----------------------------------------------------------------------
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private Long extractUserId(String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            return JwtUtil.getUserIdFromToken(token);
+            return jwtUtil.extractUserId(token);
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or missing Authorization token");
     }
@@ -122,6 +122,23 @@ public class OrderService {
 
         if (!"PENDING".equals(order.getOrderStatus())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Only PENDING orders can be cancelled.");
+        }
+
+        if (order.getOrderItems() != null) {
+            for (OrderItem item : order.getOrderItems()) {
+                if (item == null || item.getProductId() == null || item.getQuantity() == null || item.getQuantity() <= 0) {
+                    continue;
+                }
+                Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Product not found for restoration: " + item.getProductId()));
+                if (product.getStock() == null) {
+                    product.setStock(0);
+                }
+                product.setStock(product.getStock() + item.getQuantity());
+                productRepository.save(product);
+            }
         }
 
         order.setOrderStatus("CANCELLED");

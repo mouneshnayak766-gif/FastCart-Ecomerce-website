@@ -2,22 +2,48 @@ package com.example.fastcart.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * CHANGED: Now a Spring @Component so the secret can be injected from
+ * application.properties via @Value. All callers (JwtAuthFilter, controllers)
+ * must @Autowired / constructor-inject this instead of using static calls.
+ */
+@Component
 public class JwtUtil {
 
-    private static final String SECRET =
-            "mysecretkeymysecretkeymysecretkey123456789";
+    @Value("${jwt.secret}")
+    private String secret;
 
-    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private Key key;
 
-    private static final long ACCESS_TOKEN_EXPIRY  = 1000L * 60 * 15;          // 15 minutes
-    private static final long REFRESH_TOKEN_EXPIRY = 1000L * 60 * 60 * 24 * 7; // 7 days
+    // 15 minutes — short-lived on purpose; refresh token handles longevity
+    private static final long ACCESS_TOKEN_EXPIRY = 1000L * 60 * 15;
 
-    public static String generateAccessToken(Long userId) {
+    // Default refresh expiry (no remember-me): 1 day
+    public static final long REFRESH_TOKEN_EXPIRY_DEFAULT = 1000L * 60 * 60 * 24;
+
+    // Remember-me refresh expiry: 30 days
+    public static final long REFRESH_TOKEN_EXPIRY_REMEMBER_ME = 1000L * 60 * 60 * 24 * 30;
+
+    @PostConstruct
+    public void init() {
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalStateException(
+                "jwt.secret in application.properties must be at least 32 characters. " +
+                "Generate with: openssl rand -hex 32"
+            );
+        }
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
+    public String generateAccessToken(Long userId) {
         return Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .claim("type", "access")
@@ -28,14 +54,11 @@ public class JwtUtil {
     }
 
     public static String generateRefreshTokenValue() {
-        return UUID.randomUUID().toString() + "-" + UUID.randomUUID();
+        // Two UUIDs concatenated — 72 chars of cryptographic randomness
+        return UUID.randomUUID() + "-" + UUID.randomUUID();
     }
 
-    public static long getRefreshTokenExpiryMillis() {
-        return REFRESH_TOKEN_EXPIRY;
-    }
-
-    public static Long extractUserId(String token) {
+    public Long extractUserId(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -44,18 +67,33 @@ public class JwtUtil {
         return Long.parseLong(claims.getSubject());
     }
 
-    public static Long getUserIdFromToken(String token) {
+    public Long getUserIdFromToken(String token) {
         return extractUserId(token);
     }
 
-    public static boolean isTokenExpired(String token) {
+    /**
+     * FIX: The old isTokenExpired() caught ALL exceptions and returned true,
+     * meaning a tampered token (bad signature, malformed) was indistinguishable
+     * from an expired token. This masked security violations.
+     *
+     * Now: only ExpiredJwtException → EXPIRED. Everything else → INVALID.
+     * Your JwtAuthFilter should treat EXPIRED as "try refresh", INVALID as hard 401.
+     */
+    public TokenValidationResult validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return false;
+            return TokenValidationResult.VALID;
         } catch (ExpiredJwtException e) {
-            return true;
-        } catch (Exception e) {
-            return true;
+            return TokenValidationResult.EXPIRED;
+        } catch (JwtException | IllegalArgumentException e) {
+            // Covers: SignatureException, MalformedJwtException, UnsupportedJwtException
+            return TokenValidationResult.INVALID;
         }
+    }
+
+    public enum TokenValidationResult {
+        VALID,
+        EXPIRED,   // Token is past expiry — candidate for silent refresh
+        INVALID    // Tampered, malformed, or wrong key — hard reject, no retry
     }
 }

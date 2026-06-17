@@ -27,13 +27,16 @@ public class AdminController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     // ── AUTH HELPER ───────────────────────────────────────────────────────────
 
     private boolean isNotAuthorized(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) return true;
         try {
             String token = authHeader.substring(7);
-            Long userId = JwtUtil.getUserIdFromToken(token);
+            Long userId = jwtUtil.extractUserId(token);
             return !AdminService.ADMIN_SYSTEM_ID.equals(userId);
         } catch (Exception e) {
             return true;
@@ -48,8 +51,8 @@ public class AdminController {
             return ResponseEntity.badRequest().body(Map.of("message", "Email and password required"));
         }
         if (adminService.isValidAdmin(loginRequest.getEmail(), loginRequest.getPassword())) {
-            String accessToken = JwtUtil.generateAccessToken(AdminService.ADMIN_SYSTEM_ID);
-            RefreshToken refreshToken = authService.createRefreshToken(AdminService.ADMIN_SYSTEM_ID);
+            String accessToken = jwtUtil.generateAccessToken(AdminService.ADMIN_SYSTEM_ID);
+            RefreshToken refreshToken = authService.createRefreshToken(AdminService.ADMIN_SYSTEM_ID, false);
             return ResponseEntity.ok(Map.of(
                     "message", "Login successful",
                     "accessToken", accessToken,

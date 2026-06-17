@@ -5,7 +5,13 @@ import API from "../service/api";
 export default function Account() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -16,16 +22,35 @@ export default function Account() {
   });
 
   useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const response = await API.get("/users/profile");
+        const profile = response.data;
+        localStorage.setItem("user", JSON.stringify(profile));
+        setUser(profile);
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+    };
+
     if (!user) {
-      navigate("/login");
-    } else {
+      loadProfile();
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (user) {
       setEditForm({
         name: user.name || "",
         phoneNumber: user.phoneNumber || "",
         address: user.address || "",
       });
     }
-  }, [user, navigate]);
+  }, [user]);
 
   const triggerMessage = (type, text) => {
     setMessage({ type, text });
