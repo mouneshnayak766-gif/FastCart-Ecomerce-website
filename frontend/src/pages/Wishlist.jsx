@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 // BUG FIX: Was mixing axios (direct with full URLs) and API service.
 // Standardised to use API service everywhere for consistency.
 import API from "../service/api";
@@ -81,7 +82,7 @@ export default function Wishlist() {
   // ADD TO CART
   const addToCart = async (product) => {
     if (!token) {
-      alert("Please login to add items to cart");
+      toast.info("Please login to add items to cart.");
       return;
     }
     try {
@@ -100,10 +101,10 @@ export default function Wishlist() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert("Added to Cart 🛒");
+      toast.success("Added to cart successfully.");
     } catch (error) {
       console.error("addToCart error:", error);
-      alert(error.response?.data || "Failed to add to cart");
+      toast.error(error.response?.data || "Failed to add to cart.");
     }
   };
 
@@ -118,7 +119,7 @@ export default function Wishlist() {
       setProducts((prev) => prev.filter((p) => p.id !== productId));
     } catch (error) {
       console.error("removeWishlist error:", error);
-      alert(error.response?.data || "Failed to remove from wishlist");
+      toast.error(error.response?.data || "Failed to remove from wishlist.");
     }
   };
 

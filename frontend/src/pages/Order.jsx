@@ -26,9 +26,8 @@ function StatusBadge({ status }) {
 }
 
 export default function Orders() {
-  const location  = useNavigate();
-  const navigate  = useNavigate();
-  const loc       = useLocation();
+  const navigate = useNavigate();
+  const loc = useLocation();
 
   const [orders,           setOrders]           = useState([]);
   const [loading,          setLoading]          = useState(true);

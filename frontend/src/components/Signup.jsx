@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import API from "../service/api";
 
 export default function Signup() {
@@ -12,19 +13,24 @@ export default function Signup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault();
+
     try {
       await API.post("/users/signup", formData);
-      alert("Signup Successful");
+      toast.success("Signup successful! Please login.");
       navigate("/login");
     } catch (error) {
-      alert(error.response?.data || "Signup Failed");
+      toast.error(error.response?.data || "Signup failed.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-[400px] flex flex-col gap-4">
+      <form
+        onSubmit={handleSignup}
+        className="bg-white p-8 rounded-xl shadow-lg w-[400px] flex flex-col gap-4"
+      >
         <h1 className="text-3xl font-bold text-center">Signup</h1>
 
         <input type="text" name="name" placeholder="Name" className="border p-3 rounded" onChange={handleChange} />
@@ -34,7 +40,7 @@ export default function Signup() {
         <input type="text" name="phoneNumber" placeholder="Phone Number" className="border p-3 rounded" onChange={handleChange} />
 
         <button
-          onClick={handleSignup}
+          type="submit"
           className="bg-green-600 text-white p-3 rounded hover:bg-green-700"
         >
           Signup
@@ -48,7 +54,7 @@ export default function Signup() {
             Login
           </span>
         </p>
-      </div>
+      </form>
     </div>
   );
 }

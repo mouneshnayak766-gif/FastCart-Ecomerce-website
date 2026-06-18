@@ -1,5 +1,6 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 import Home from "../pages/Home";
 import CategoryPage from "../pages/CategoryPage";
@@ -21,7 +22,7 @@ export default function AppRoutes() {
     const handleSessionExpired = (e) => {
       const isAdmin = e.detail?.isAdmin;
 
-      alert(
+      toast.error(
         isAdmin
           ? "Admin session expired. Please log in again."
           : "Your session has expired. Please log in again."

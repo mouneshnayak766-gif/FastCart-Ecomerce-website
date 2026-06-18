@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 import CategoryBar from "../components/CategoryBar";
 
@@ -27,7 +28,10 @@ export default function ProductDetail() {
   // =========================
   const addToCart = async () => {
     const { token, user } = getAuthData();
-    if (!user || !token) return alert("Please Login First");
+    if (!user || !token) {
+      toast.info("Please login first.");
+      return;
+    }
 
     try {
       await axios.post(
@@ -41,10 +45,10 @@ export default function ProductDetail() {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Product Added To Cart 🛒");
+      toast.success("Product added to cart.");
     } catch (error) {
       console.error(error);
-      alert("Failed To Add Cart");
+      toast.error("Failed to add product to cart.");
     }
   };
 
@@ -56,7 +60,7 @@ export default function ProductDetail() {
 
     const { token, user } = getAuthData();
     if (!user || !token) {
-      alert("Please login to proceed with your purchase!");
+      toast.info("Please login to proceed with your purchase.");
       navigate("/login");
       return;
     }
@@ -83,7 +87,10 @@ export default function ProductDetail() {
   // =========================
   const toggleWishlist = async () => {
     const { token, user } = getAuthData();
-    if (!user || !token) return alert("Please Login First");
+    if (!user || !token) {
+      toast.info("Please login first.");
+      return;
+    }
 
     try {
       if (wishlistAdded) {
@@ -92,6 +99,7 @@ export default function ProductDetail() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setWishlistAdded(false);
+        toast.success("Removed from wishlist.");
       } else {
         await axios.post(
           "http://localhost:8081/api/wishlist/add",
@@ -99,10 +107,11 @@ export default function ProductDetail() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setWishlistAdded(true);
+        toast.success("Added to wishlist.");
       }
     } catch (error) {
       console.error(error);
-      alert(error.response?.data || "Wishlist action failed");
+      toast.error(error.response?.data || "Wishlist action failed.");
     }
   };
 

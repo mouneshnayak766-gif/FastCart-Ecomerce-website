@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import API from "../service/api";
 
 export default function Login() {
@@ -7,7 +8,9 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
       const response = await API.post("/users/login", { email, password });
 
@@ -15,34 +18,40 @@ export default function Login() {
         localStorage.setItem("accessToken", response.data.accessToken);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         localStorage.setItem("user", JSON.stringify(response.data.user));
-        window.location.href = "/";
+        toast.success("Login successful!");
+        navigate("/", { replace: true });
       } else {
-        alert("Invalid Email or Password");
+        toast.error("Invalid email or password.");
       }
     } catch (error) {
-      alert(error.response?.data?.message || error.response?.data || "Server Error");
+      toast.error(error.response?.data?.message || error.response?.data || "Server error.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-[350px] flex flex-col gap-4">
+      <form
+        onSubmit={handleLogin}
+        className="bg-white p-8 rounded-xl shadow-lg w-[350px] flex flex-col gap-4"
+      >
         <h1 className="text-3xl font-bold text-center">Login</h1>
 
         <input
           type="email"
           placeholder="Email"
           className="border p-3 rounded"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
           className="border p-3 rounded"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <button
-          onClick={handleLogin}
+          type="submit"
           className="bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
         >
           Login
@@ -56,7 +65,7 @@ export default function Login() {
             Sign up
           </span>
         </p>
-      </div>
+      </form>
     </div>
   );
 }

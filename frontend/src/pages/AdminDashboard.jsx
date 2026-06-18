@@ -218,10 +218,11 @@ export default function AdminDashboard() {
       }
       setIsProductModalOpen(false);
       setSearchQuery("");
+      toast.success("Product saved successfully.");
       loadDashboardData();
     } catch (err) {
       console.error("Save product error:", err);
-      alert("Failed to save product. Check console for details.");
+      toast.error("Failed to save product. Check console for details.");
     }
   };
 
@@ -229,9 +230,10 @@ export default function AdminDashboard() {
     if (!window.confirm("Delete this product permanently?")) return;
     try {
       await API.delete(`/admin/products/${id}`);
+      toast.success("Product deleted successfully.");
       loadDashboardData();
     } catch (err) {
-      alert("Failed to delete product.");
+      toast.error("Failed to delete product.");
     }
   };
 
@@ -241,9 +243,10 @@ export default function AdminDashboard() {
     try {
       await API.post(`/admin/orders/${id}/cancel`, {});
       setIsOrderModalOpen(false);
+      toast.success("Order cancelled successfully.");
       loadDashboardData();
     } catch (err) {
-      alert("Failed to cancel order.");
+      toast.error("Failed to cancel order.");
     }
   };
 
@@ -252,9 +255,10 @@ export default function AdminDashboard() {
     try {
       await API.post(`/admin/orders/${id}/refund`, {});
       setIsOrderModalOpen(false);
+      toast.success("Refund processed successfully.");
       loadDashboardData();
     } catch (err) {
-      alert("Failed to refund order.");
+      toast.error("Failed to refund order.");
     }
   };
 

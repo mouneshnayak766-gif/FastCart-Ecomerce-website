@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import API from "../service/api";
 
 export default function Cart() {
@@ -37,7 +38,7 @@ export default function Cart() {
       setCart((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
       console.error("removeItem error:", error);
-      alert(error.response?.data || "Failed to remove item");
+      toast.error(error.response?.data || "Failed to remove item.");
     }
   };
 
@@ -52,7 +53,7 @@ export default function Cart() {
       );
     } catch (error) {
       console.error("increaseQuantity error:", error);
-      alert(error.response?.data || "Cannot increase quantity");
+      toast.error(error.response?.data || "Cannot increase quantity.");
     }
   };
 
@@ -83,7 +84,7 @@ export default function Cart() {
   // CHECKOUT HANDLER
   const handleCartCheckout = () => {
     if (cart.length === 0) {
-      alert("Your shopping cart is currently empty.");
+      toast.info("Your shopping cart is currently empty.");
       return;
     }
 
