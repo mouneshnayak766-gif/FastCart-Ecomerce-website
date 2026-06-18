@@ -90,6 +90,21 @@
      <scope>runtime</scope>
 	 <optional>true</optional>
 </dependency>
+          <!-- Razorpay Java SDK — order creation via Razorpay API -->
+<dependency>
+    <groupId>com.razorpay</groupId>
+    <artifactId>razorpay-java</artifactId>
+    <version>1.4.5</version>
+</dependency>
+
+<!-- org.json — required internally by razorpay-java for JSONObject -->
+<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20240303</version>
+</dependency>
+
+
 
 <dependency>
     <groupId>org.springframework.security</groupId>
