@@ -1,2 +1,10 @@
-
 @import "tailwindcss";
+
+/*
+  Tailwind v4 defaults `dark:` to the OS-level `prefers-color-scheme` media
+  query, which means there's no way to override it with a manual toggle.
+  This line switches `dark:` to class-based instead: any `dark:bg-...` etc.
+  now activates when an ancestor element (we use <html>) has class="dark".
+  ThemeContext.jsx is what adds/removes that class.
+*/
+@custom-variant dark (&:where(.dark, .dark *));

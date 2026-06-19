@@ -4,6 +4,7 @@ import API from "../service/api";
 
 export default function Account() {
   const navigate = useNavigate();
+ 
 
   const [user, setUser] = useState(() => {
     try {
