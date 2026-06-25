@@ -2,18 +2,19 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
-import Home from "../pages/Home";
-import CategoryPage from "../pages/CategoryPage";
-import ProductDetail from "../pages/ProductDetail";
-import Login from "../components/login";
-import Signup from "../components/Signup";
-import Account from "../components/Account";
-import Wishlist from "../pages/Wishlist";
-import Cart from "../pages/Cart";
-import Checkout from "../pages/Checkout";
-import Orders from "../pages/Order";
-import AdminLogin from "../pages/AdminLogin";
-import AdminDashboard from "../pages/AdminDashboard";
+import AppLayout       from "../layout/AppLayout";
+import Home            from "../pages/Home";
+import CategoryPage    from "../pages/CategoryPage";
+import ProductDetail   from "../pages/ProductDetail";
+import Login           from "../components/login";
+import Signup          from "../components/Signup";
+import Account         from "../components/Account";
+import Wishlist        from "../pages/Wishlist";
+import Cart            from "../pages/Cart";
+import Checkout        from "../pages/Checkout";
+import Orders          from "../pages/Order";
+import AdminLogin      from "../pages/AdminLogin";
+import AdminDashboard  from "../pages/AdminDashboard";
 
 export default function AppRoutes() {
   const navigate = useNavigate();
@@ -43,18 +44,33 @@ export default function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/category/:category" element={<CategoryPage />} />
-      <Route path="/product/:id" element={<ProductDetail />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/account" element={<Account />} />
-      <Route path="/wishlist" element={<Wishlist />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/orders" element={<Orders />} />
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+      {/*
+        ── USER PAGES: wrapped in AppLayout ─────────────────────────────────
+        AppLayout renders:  <SearchProvider> <Navbar /> <Outlet /> </SearchProvider>
+        Every page inside this Route group gets the global Navbar automatically.
+      */}
+      <Route element={<AppLayout />}>
+        <Route path="/"                   element={<Home />} />
+        <Route path="/category/:category" element={<CategoryPage />} />
+        <Route path="/product/:id"        element={<ProductDetail />} />
+        <Route path="/account"            element={<Account />} />
+        <Route path="/wishlist"           element={<Wishlist />} />
+        <Route path="/cart"               element={<Cart />} />
+        <Route path="/checkout"           element={<Checkout />} />
+        <Route path="/orders"             element={<Orders />} />
+      </Route>
+
+      {/*
+        ── AUTH PAGES: no Navbar ─────────────────────────────────────────────
+        Login and Signup are standalone — no Navbar so the UI is clean and
+        focused. Same for Admin pages.
+      */}
+      <Route path="/login"            element={<Login />} />
+      <Route path="/signup"           element={<Signup />} />
+      <Route path="/admin/login"      element={<AdminLogin />} />
+      <Route path="/admin/dashboard"  element={<AdminDashboard />} />
+
     </Routes>
   );
 }

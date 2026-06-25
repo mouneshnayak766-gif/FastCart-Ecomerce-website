@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-
+ import { useEffect, useState } from "react";
 
 export default function Banner() {
- const images = [
+  const images = [
     "/images/banner1.jpg",
     "/images/banner2.jpg",
     "/images/banner3.jpg",
@@ -44,8 +43,8 @@ export default function Banner() {
         {images.map((_, i) => (
           <div
             key={i}
-            className={`h-2 w-6 rounded-full ${
-              current === i ? "bg-black" : "bg-gray-300"
+            className={`h-2 w-6 rounded-full transition-colors duration-200 ${
+              current === i ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"
             }`}
           ></div>
         ))}

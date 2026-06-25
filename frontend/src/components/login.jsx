@@ -29,24 +29,24 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-8 rounded-xl shadow-lg w-[350px] flex flex-col gap-4"
+        className="bg-white dark:bg-gray-800 text-black dark:text-white p-8 rounded-xl shadow-lg w-[350px] flex flex-col gap-4"
       >
         <h1 className="text-3xl font-bold text-center">Login</h1>
 
         <input
           type="email"
           placeholder="Email"
-          className="border p-3 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="border p-3 rounded"
+          className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -56,10 +56,10 @@ export default function Login() {
         >
           Login
         </button>
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
           Don't have an account?{" "}
           <span
-            className="text-blue-600 cursor-pointer hover:underline"
+            className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline"
             onClick={() => navigate("/signup")}
           >
             Sign up

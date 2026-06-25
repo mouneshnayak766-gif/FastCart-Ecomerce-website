@@ -1,62 +1,45 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// BUG FIX: Was using axios directly with a hardcoded URL.
-// Changed to use the API service so the base URL is centralised.
 import API from "../service/api";
 import ProductCard from "../components/ProductCard";
-import Navbar from "../components/Navbar";
 import CategoryBar from "../components/CategoryBar";
 
-function CategoryPage() {
+// Navbar is NO LONGER imported or rendered here.
+// AppLayout (via AppRoutes) already wraps this page with <Navbar />.
+// Rendering it again would produce a double navbar.
 
+function CategoryPage() {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading,  setLoading]  = useState(true);
 
   useEffect(() => {
     setLoading(true);
     API.get(`/products/category/${category}`)
-      .then((response) => {
-        setProducts(response.data || []);
-      })
-      .catch((error) => {
-        console.error("CategoryPage fetch error:", error);
+      .then((res)  => setProducts(res.data || []))
+      .catch((err) => {
+        console.error("CategoryPage fetch error:", err);
         setProducts([]);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, [category]);
 
   return (
-    <>
-      {/* BUG FIX: Navbar was receiving dummy empty props.
-          This is fine for CategoryPage since search/filter lives on Home.
-          Props kept as-is since the Navbar component requires them. */}
-      <Navbar
-        search=""
-        setSearch={() => {}}
-        selectedCategory=""
-        setSelectedCategory={() => {}}
-        sortOption=""
-        setSortOption={() => {}}
-        minRating=""
-        setMinRating={() => {}}
-      />
+    <div className="bg-gray-100 dark:bg-gray-950 min-h-screen text-black dark:text-white transition-colors duration-200">
 
       <CategoryBar />
 
       <div className="p-6">
-        <h2 className="text-2xl font-bold mb-6 capitalize">
+        <h2 className="text-2xl font-bold mb-6 capitalize text-gray-800 dark:text-white">
           {category}
         </h2>
 
         {loading ? (
-          <div className="text-center text-gray-500 text-xl py-10 animate-pulse">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-xl py-16 animate-pulse">
             Loading products...
           </div>
         ) : products.length === 0 ? (
-          <div className="text-center text-gray-500 text-xl py-10">
+          <div className="text-center text-gray-500 dark:text-gray-400 text-xl py-16">
             No products found in "{category}"
           </div>
         ) : (
@@ -67,7 +50,7 @@ function CategoryPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

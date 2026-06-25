@@ -110,6 +110,9 @@ export default function Checkout() {
 
     setPaymentStep("awaiting_payment");
 
+    // Detect if dark mode is active on the HTML document body framework root
+    const isDarkModeActive = document.documentElement.classList.contains("dark");
+
     // ── PHASE 2: Open Razorpay modal ──────────────────────────────────────
     const razorpayOptions = {
       key:         initiateData.keyId,
@@ -130,7 +133,11 @@ export default function Checkout() {
         orderId: String(initiateData.orderId),
       },
 
-      theme: { color: "#16a34a" },  // green-600 — matches your UI
+      // Updated: Razorpay theme options color palette scales elegantly with the app theme
+      theme: { 
+        color: "#16a34a",
+        backdrop_color: isDarkModeActive ? "#111827" : "#ffffff"
+      },
 
       // ── Success handler ─────────────────────────────────────────────────
       // Razorpay calls this ONLY after payment is collected on their end.
@@ -198,12 +205,12 @@ export default function Checkout() {
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold mb-8 text-gray-800">Checkout</h1>
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen p-4 md:p-8 transition-colors duration-200">
+      <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg border border-transparent dark:border-gray-700">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-white">Checkout</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-xl font-medium flex items-start gap-2">
+          <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border border-transparent dark:border-red-800 rounded-xl font-medium flex items-start gap-2">
             <span>⚠️</span>
             <span>{error}</span>
           </div>
@@ -211,40 +218,40 @@ export default function Checkout() {
 
         {/* Awaiting payment overlay message */}
         {paymentStep === "awaiting_payment" && (
-          <div className="mb-6 p-4 bg-blue-50 text-blue-800 rounded-xl font-medium flex items-center gap-2 border border-blue-200">
-            <span className="animate-spin">⏳</span>
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 rounded-xl font-medium flex items-center gap-2 border border-blue-200 dark:border-blue-900">
+            <span className="inline-block animate-spin">⏳</span>
             <span>Payment window is open. Complete the payment there — do not close this tab.</span>
           </div>
         )}
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* ── Items listing ────────────────────────────────────────────── */}
-          <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
-            <h3 className="text-xl font-bold mb-4 text-gray-700">Review Items</h3>
-            <div className="space-y-4 max-h-64 overflow-y-auto pr-1">
+          <div className="bg-gray-50 dark:bg-gray-700/40 p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <h3 className="text-xl font-bold mb-4 text-gray-700 dark:text-gray-300">Review Items</h3>
+            <div className="space-y-4 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
               {orderItems.map((item, idx) => (
-                <div key={idx} className="flex gap-4 items-center bg-white p-3 rounded-xl border border-gray-200">
+                <div key={idx} className="flex gap-4 items-center bg-white dark:bg-gray-800 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
                   <img
                     src={item.imageUrl}
-                    className="w-16 h-16 object-contain rounded-xl border bg-white p-1"
+                    className="w-16 h-16 object-contain rounded-xl border border-gray-200 dark:border-gray-600 bg-white p-1"
                     alt={item.productName || "Product"}
                   />
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm text-gray-800 truncate">{item.productName}</h4>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <h4 className="font-bold text-sm text-gray-800 dark:text-white truncate">{item.productName}</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       Qty: {item.quantity} × ₹{item.price.toFixed(2)}
                     </p>
                   </div>
-                  <p className="text-sm font-bold text-gray-700 whitespace-nowrap">
+                  <p className="text-sm font-bold text-gray-700 dark:text-gray-200 whitespace-nowrap">
                     ₹{(item.price * item.quantity).toFixed(2)}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="border-t mt-6 pt-4 flex justify-between items-center">
-              <span className="text-lg font-bold text-gray-800">Grand Total</span>
-              <span className="text-2xl font-bold text-green-600">₹{totalAmount.toFixed(2)}</span>
+            <div className="border-t border-gray-200 dark:border-gray-700 mt-6 pt-4 flex justify-between items-center">
+              <span className="text-lg font-bold text-gray-800 dark:text-gray-200">Grand Total</span>
+              <span className="text-2xl font-bold text-green-600 dark:text-green-400">₹{totalAmount.toFixed(2)}</span>
             </div>
           </div>
 
@@ -252,7 +259,7 @@ export default function Checkout() {
           <div>
             <form onSubmit={handleConfirmOrder} className="space-y-6">
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">
                   Shipping Address
                 </label>
                 <textarea
@@ -262,24 +269,24 @@ export default function Checkout() {
                   value={shippingAddress}
                   onChange={(e) => setShippingAddress(e.target.value)}
                   placeholder="Enter your full shipping address"
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-gray-100 dark:disabled:bg-gray-700/50 transition duration-150"
                 />
               </div>
 
               {/* Payment method badge */}
-              <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl">
-                <p className="text-blue-800 font-semibold flex items-center gap-2 text-sm">
+              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 p-4 rounded-xl">
+                <p className="text-blue-800 dark:text-blue-300 font-semibold flex items-center gap-2 text-sm">
                   🔒 <span>Secure Payment via Razorpay</span>
                 </p>
-                <p className="text-blue-600 text-xs mt-1">
+                <p className="text-blue-600 dark:text-blue-400 text-xs mt-1">
                   UPI, Cards, Net Banking, Wallets — all supported. Your payment is encrypted end-to-end.
                 </p>
               </div>
 
               {/* Razorpay branding — required per their T&C */}
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-400 dark:text-gray-500">
                 <span>Powered by</span>
-                <span className="font-bold text-gray-500">Razorpay</span>
+                <span className="font-bold text-gray-500 dark:text-gray-400">Razorpay</span>
               </div>
 
               <button
@@ -287,10 +294,10 @@ export default function Checkout() {
                 disabled={isLoading}
                 className={`w-full p-4 rounded-xl font-bold text-xl tracking-wide shadow-md transition text-white
                   ${paymentStep === "done"
-                    ? "bg-green-700"
+                    ? "bg-green-700 dark:bg-green-800"
                     : isLoading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
+                    ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700 dark:hover:bg-green-500"
                   }`}
               >
                 {isLoading && paymentStep !== "done" && (
@@ -300,7 +307,7 @@ export default function Checkout() {
                 {buttonLabel}
               </button>
 
-              <p className="text-center text-xs text-gray-400">
+              <p className="text-center text-xs text-gray-400 dark:text-gray-500">
                 By confirming, you agree to our Terms of Service.
               </p>
             </form>

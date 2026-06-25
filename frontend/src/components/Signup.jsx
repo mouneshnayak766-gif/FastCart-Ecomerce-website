@@ -26,18 +26,18 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
       <form
         onSubmit={handleSignup}
-        className="bg-white p-8 rounded-xl shadow-lg w-[400px] flex flex-col gap-4"
+        className="bg-white dark:bg-gray-800 text-black dark:text-white p-8 rounded-xl shadow-lg w-[400px] flex flex-col gap-4"
       >
         <h1 className="text-3xl font-bold text-center">Signup</h1>
 
-        <input type="text" name="name" placeholder="Name" className="border p-3 rounded" onChange={handleChange} />
-        <input type="email" name="email" placeholder="Email" className="border p-3 rounded" onChange={handleChange} />
-        <input type="password" name="password" placeholder="Password" className="border p-3 rounded" onChange={handleChange} />
-        <input type="text" name="address" placeholder="Address" className="border p-3 rounded" onChange={handleChange} />
-        <input type="text" name="phoneNumber" placeholder="Phone Number" className="border p-3 rounded" onChange={handleChange} />
+        <input type="text" name="name" placeholder="Name" className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white" onChange={handleChange} />
+        <input type="email" name="email" placeholder="Email" className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white" onChange={handleChange} />
+        <input type="password" name="password" placeholder="Password" className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white" onChange={handleChange} />
+        <input type="text" name="address" placeholder="Address" className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white" onChange={handleChange} />
+        <input type="text" name="phoneNumber" placeholder="Phone Number" className="border border-gray-300 dark:border-gray-600 p-3 rounded bg-white dark:bg-gray-700 text-black dark:text-white" onChange={handleChange} />
 
         <button
           type="submit"
@@ -45,10 +45,10 @@ export default function Signup() {
         >
           Signup
         </button>
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
           Already have an account?{" "}
           <span
-            className="text-blue-600 cursor-pointer hover:underline"
+            className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline"
             onClick={() => navigate("/login")}
           >
             Login

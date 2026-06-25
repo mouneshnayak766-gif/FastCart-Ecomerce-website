@@ -4,7 +4,6 @@ import API from "../service/api";
 
 export default function Account() {
   const navigate = useNavigate();
- 
 
   const [user, setUser] = useState(() => {
     try {
@@ -58,7 +57,6 @@ export default function Account() {
     setTimeout(() => setMessage({ type: "", text: "" }), 4000);
   };
 
-  // Real logout — revokes refresh token on backend first
   const logout = async () => {
     try {
       await API.post("/users/logout", {
@@ -109,8 +107,8 @@ export default function Account() {
   if (!user) return null;
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen p-8 text-black dark:text-white transition-colors duration-200">
+      <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg">
 
         {/* Nav */}
         <div className="flex gap-3 mb-6">
@@ -124,7 +122,7 @@ export default function Account() {
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-          <h1 className="text-4xl font-bold text-gray-800">👤 My Profile</h1>
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-white">👤 My Profile</h1>
           <div className="flex gap-3">
             {!isEditing && !isChangingPassword && (
               <>
@@ -148,7 +146,7 @@ export default function Account() {
         {/* Notification */}
         {message.text && (
           <div className={`mb-6 p-4 rounded-xl font-medium text-center ${
-            message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+            message.type === "success" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
           }`}>
             {message.text}
           </div>
@@ -157,89 +155,89 @@ export default function Account() {
         {/* View Mode */}
         {!isEditing && !isChangingPassword && (
           <div className="grid md:grid-cols-2 gap-6 text-lg">
-            <div className="bg-gray-50 p-5 rounded-xl">
-              <p className="font-semibold text-gray-500">Name</p>
-              <h2 className="text-2xl font-bold mt-2 text-gray-800">{user.name}</h2>
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-xl">
+              <p className="font-semibold text-gray-500 dark:text-gray-400">Name</p>
+              <h2 className="text-2xl font-bold mt-2 text-gray-800 dark:text-white">{user.name}</h2>
             </div>
-            <div className="bg-gray-50 p-5 rounded-xl">
-              <p className="font-semibold text-gray-500">Email</p>
-              <h2 className="text-xl mt-2 text-gray-700">{user.email}</h2>
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-xl">
+              <p className="font-semibold text-gray-500 dark:text-gray-400">Email</p>
+              <h2 className="text-xl mt-2 text-gray-700 dark:text-gray-200">{user.email}</h2>
             </div>
-            <div className="bg-gray-50 p-5 rounded-xl">
-              <p className="font-semibold text-gray-500">Phone</p>
-              <h2 className="text-xl mt-2 text-gray-700">{user.phoneNumber || "Not set"}</h2>
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-xl">
+              <p className="font-semibold text-gray-500 dark:text-gray-400">Phone</p>
+              <h2 className="text-xl mt-2 text-gray-700 dark:text-gray-200">{user.phoneNumber || "Not set"}</h2>
             </div>
-            <div className="bg-gray-50 p-5 rounded-xl">
-              <p className="font-semibold text-gray-500">Address</p>
-              <h2 className="text-xl mt-2 text-gray-700">{user.address || "Not set"}</h2>
+            <div className="bg-gray-50 dark:bg-gray-700 p-5 rounded-xl">
+              <p className="font-semibold text-gray-500 dark:text-gray-400">Address</p>
+              <h2 className="text-xl mt-2 text-gray-700 dark:text-gray-200">{user.address || "Not set"}</h2>
             </div>
           </div>
         )}
 
         {/* Edit Mode */}
         {isEditing && (
-          <form onSubmit={handleEditSubmit} className="bg-gray-50 p-6 rounded-2xl max-w-2xl border border-gray-200">
-            <h3 className="text-2xl font-bold mb-6 text-gray-700">Edit Profile</h3>
+          <form onSubmit={handleEditSubmit} className="bg-gray-50 dark:bg-gray-700 p-6 rounded-2xl max-w-2xl border border-gray-200 dark:border-gray-600">
+            <h3 className="text-2xl font-bold mb-6 text-gray-700 dark:text-white">Edit Profile</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">Full Name</label>
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">Full Name</label>
                 <input
                   type="text" required value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-blue-500"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">Phone Number</label>
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">Phone Number</label>
                 <input
                   type="text" value={editForm.phoneNumber}
                   onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-blue-500"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">Shipping Address</label>
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">Shipping Address</label>
                 <textarea
                   rows="3" value={editForm.address}
                   onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-blue-500"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-blue-500"
                 />
               </div>
             </div>
             <div className="flex gap-4 mt-6">
               <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl font-bold">Save</button>
-              <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2.5 rounded-xl font-bold">Cancel</button>
+              <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-300 hover:bg-gray-400 text-gray-700 dark:text-gray-200 px-6 py-2.5 rounded-xl font-bold">Cancel</button>
             </div>
           </form>
         )}
 
         {/* Change Password Mode */}
         {isChangingPassword && (
-          <form onSubmit={handleChangePasswordSubmit} className="bg-gray-50 p-6 rounded-2xl max-w-2xl border border-gray-200">
-            <h3 className="text-2xl font-bold mb-6 text-purple-700">Change Password</h3>
+          <form onSubmit={handleChangePasswordSubmit} className="bg-gray-50 dark:bg-gray-700 p-6 rounded-2xl max-w-2xl border border-gray-200 dark:border-gray-600">
+            <h3 className="text-2xl font-bold mb-6 text-purple-700 dark:text-purple-400">Change Password</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">Current Password</label>
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">Current Password</label>
                 <input
                   type="password" required value={passwordForm.currentPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-purple-500"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-purple-500"
                 />
               </div>
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">New Password</label>
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">New Password</label>
                 <input
                   type="password" required value={passwordForm.newPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-purple-500"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-purple-500"
                 />
               </div>
               <div>
-                <label className="block text-gray-600 font-semibold mb-2">Confirm New Password</label>
+                <label className="block text-gray-600 dark:text-gray-300 font-semibold mb-2">Confirm New Password</label>
                 <input
                   type="password" required value={passwordForm.confirmPassword}
                   onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-300 focus:outline-purple-500"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white focus:outline-purple-500"
                 />
               </div>
             </div>
@@ -248,7 +246,7 @@ export default function Account() {
               <button type="button" onClick={() => {
                 setIsChangingPassword(false);
                 setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-              }} className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2.5 rounded-xl font-bold">Cancel</button>
+              }} className="bg-gray-300 hover:bg-gray-400 text-gray-700 dark:text-gray-200 px-6 py-2.5 rounded-xl font-bold">Cancel</button>
             </div>
           </form>
         )}
@@ -269,7 +267,7 @@ export default function Account() {
         )}
 
         {/* Logout */}
-        <div className="mt-12 border-t pt-6">
+        <div className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-6">
           <button
             onClick={logout}
             className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow transition"

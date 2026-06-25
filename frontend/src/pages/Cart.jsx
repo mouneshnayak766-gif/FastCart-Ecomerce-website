@@ -105,24 +105,24 @@ export default function Cart() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8">🛒 My Cart</h1>
+    <div className="bg-gray-100 dark:bg-gray-900 text-black dark:text-white min-h-screen p-8 transition-colors duration-200">
+      <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">🛒 My Cart</h1>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* CART ITEMS */}
         <div className="lg:col-span-2 space-y-6">
           {cart.length === 0 ? (
-            <div className="bg-white p-10 rounded-xl shadow text-center">
-              <h2 className="text-3xl font-bold">Cart Is Empty 😢</h2>
-              <p className="text-gray-500 mt-3">
+            <div className="bg-white dark:bg-gray-800 p-10 rounded-xl shadow text-center">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Cart Is Empty 😢</h2>
+              <p className="text-gray-500 dark:text-gray-400 mt-3">
                 Browse products and add them to your cart!
               </p>
             </div>
           ) : (
             cart.map((item) => (
-              <div key={item.id} className="bg-white p-6 rounded-xl shadow flex flex-col md:flex-row gap-6">
+              <div key={item.id} className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow flex flex-col md:flex-row gap-6">
                 {/* IMAGE */}
-                <div className="w-full md:w-[220px] h-[220px] flex items-center justify-center">
+                <div className="w-full md:w-[220px] h-[220px] flex items-center justify-center bg-white rounded-xl p-2">
                   <img
                     src={`http://localhost:8081${item.imageUrl}`}
                     alt={item.productName}
@@ -132,27 +132,27 @@ export default function Cart() {
 
                 {/* DETAILS */}
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold">{item.productName}</h2>
-                  <p className="text-green-600 text-2xl mt-2 font-bold">₹{item.price}</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{item.productName}</h2>
+                  <p className="text-green-600 dark:text-green-400 text-2xl mt-2 font-bold">₹{item.price}</p>
 
                   {/* QUANTITY CONTROLS */}
                   <div className="flex items-center gap-4 mt-6">
                     <button
                       onClick={() => decreaseQuantity(item.id)}
-                      className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-xl font-bold"
+                      className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white px-4 py-2 rounded-lg text-xl font-bold"
                     >
                       −
                     </button>
-                    <span className="text-2xl font-bold">{item.quantity}</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{item.quantity}</span>
                     <button
                       onClick={() => increaseQuantity(item.id)}
-                      className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-xl font-bold"
+                      className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-black dark:text-white px-4 py-2 rounded-lg text-xl font-bold"
                     >
                       +
                     </button>
                   </div>
 
-                  <h2 className="mt-6 text-xl font-bold">
+                  <h2 className="mt-6 text-xl font-bold text-gray-900 dark:text-white">
                     Subtotal: ₹{item.totalPrice || item.price * item.quantity}
                   </h2>
 
@@ -169,7 +169,7 @@ export default function Cart() {
         </div>
 
         {/* PRICE SUMMARY */}
-        <div className="bg-white p-6 rounded-xl shadow h-fit">
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow h-fit text-gray-900 dark:text-white">
           <h2 className="text-2xl font-bold mb-6">Price Details</h2>
 
           <div className="space-y-4">
@@ -183,9 +183,9 @@ export default function Cart() {
             </div>
             <div className="flex justify-between">
               <span>Delivery</span>
-              <span className="text-green-600 font-semibold">FREE</span>
+              <span className="text-green-600 dark:text-green-400 font-semibold">FREE</span>
             </div>
-            <hr />
+            <hr className="border-gray-200 dark:border-gray-700" />
             <div className="flex justify-between text-2xl font-bold">
               <span>Total</span>
               <span>₹{totalPrice}</span>
