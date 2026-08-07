@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import BackendStatusBanner from "../components/BackendStatusBanner";
 import { SearchProvider } from "../context/SearchContext";
 
 /**
@@ -13,6 +14,7 @@ import { SearchProvider } from "../context/SearchContext";
 export default function AppLayout() {
   return (
     <SearchProvider>
+      <BackendStatusBanner />
       <Navbar />
       <Outlet />
     </SearchProvider>
