@@ -1,7 +1,9 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import BackendStatusBanner from "../components/BackendStatusBanner";
+import AiAssistantProvider from "../components/ai/AiAssistantProvider";
 import { SearchProvider } from "../context/SearchContext";
+import { useLanguage } from "../context/LanguageContext";
 
 /**
  * AppLayout wraps every user-facing page with the global Navbar.
@@ -12,11 +14,15 @@ import { SearchProvider } from "../context/SearchContext";
  * share the same search/filter state — no prop drilling needed.
  */
 export default function AppLayout() {
+  const { lang } = useLanguage();
+
   return (
-    <SearchProvider>
-      <BackendStatusBanner />
-      <Navbar />
-      <Outlet />
-    </SearchProvider>
+    <AiAssistantProvider language={lang}>
+      <SearchProvider>
+        <BackendStatusBanner />
+        <Navbar />
+        <Outlet />
+      </SearchProvider>
+    </AiAssistantProvider>
   );
 }

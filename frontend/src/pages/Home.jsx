@@ -3,6 +3,7 @@ import Banner       from "../components/Banner";
 import ProductCard  from "../components/ProductCard";
 import Header       from "../components/Header";
 import Footer       from "../components/Footer";
+import AiSearchBar  from "../components/ai/AiSearchBar";
 
 import { useEffect, useState } from "react";
 import { useSearch } from "../context/SearchContext";
@@ -48,6 +49,7 @@ export default function Home() {
         The global Navbar is already rendered above by AppLayout.
       */}
       <Header />
+      <AiSearchBar variant="bar" className="mx-4 my-3 md:hidden" />
       <Banner />
       <CategoryBar />
 

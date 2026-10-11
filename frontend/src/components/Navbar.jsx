@@ -7,6 +7,7 @@ import {
 import { useTheme }    from "../context/ThemeContext";
 import { useSearch }   from "../context/SearchContext";
 import { useLanguage, LANGUAGE_OPTIONS } from "../context/LanguageContext";
+import AiSearchBar from "./ai/AiSearchBar";
 import API from "../service/api";
 
 // ─── Icon+Label nav button ─────────────────────────────────────────────────────
@@ -136,6 +137,7 @@ export default function Navbar() {
             </button>
           )}
         </div>
+        <AiSearchBar variant="compact" className="hidden md:flex" />
 
         {/* RIGHT CONTROLS */}
         <div className="flex items-center gap-1 text-white shrink-0">
